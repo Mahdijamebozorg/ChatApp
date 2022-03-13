@@ -5,13 +5,29 @@ import 'package:flutter/material.dart';
 class ChatItem extends StatelessWidget {
   final Chat chat;
   final User currentUser;
-  const ChatItem({required this.chat, Key? key}) : super(key: key);
+
+  const ChatItem({
+    required this.chat,
+    required this.currentUser,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        child: Image.network(chat.users.where((element) => false)),
+    User otherUser = chat.users.firstWhere((user) => user.id != currentUser.id);
+    return Card(
+      elevation: 2,
+      child: ListTile(
+        onLongPress: () {},
+        title: Text(otherUser.name),
+        subtitle: Text(chat.messages.last.text),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: Image.network(
+            otherUser.profileUrls?[0] ?? "assets/images/user.png",
+            fit: BoxFit.contain,
+          ),
+        ),
       ),
     );
   }
