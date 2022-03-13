@@ -1,12 +1,6 @@
 # Miscellaneous
 .git/
-analysis_options.yaml
 test/
-ios/
-android/
-web/
-linux/
-windows/
 *.class
 *.log
 *.pyc
