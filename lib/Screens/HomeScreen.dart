@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          title: Text("Connecitvity"),
           actions: [
             //search button
             IconButton(
@@ -60,9 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: chats.chatsWithGroup.length,
-                itemBuilder: (context, index) => ChatItem(
-                  chat: chats.chatsWithGroup[index],
-                  currentUser: auth.currentUser as User,
+                itemBuilder: (context, index) => Hero(
+                  tag: chats.chatsWithGroup[index].id,
+                  child: ChatItem(
+                    chat: chats.chatsWithGroup[index],
+                    currentUser: auth.currentUser as User,
+                  ),
                 ),
               ),
 
@@ -79,6 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         drawer: AppDrawer(_screenSize),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {},
+        ),
       ),
     );
   }

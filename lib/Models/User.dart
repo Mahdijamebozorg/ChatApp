@@ -1,15 +1,17 @@
 class User {
   String name;
   final String id;
-  String? username;
-  String? bio;
-  List<String>? profileUrls;
+  final DateTime lastSeen;
+  String username;
+  String bio;
+  List<String> profileUrls;
 
   User({
     required this.name,
     required this.id,
-    this.bio,
-    this.username,
-    this.profileUrls,
+    required this.lastSeen,
+    required this.bio,
+    required this.username,
+    required this.profileUrls,
   });
 }

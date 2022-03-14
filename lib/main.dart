@@ -1,6 +1,7 @@
 import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Screens/AuthenticatinScreen.dart';
+import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:chatapp/Screens/HomeScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,8 @@ class MyApp extends StatelessWidget {
         builder: (context, auth, ch) => MaterialApp(
           title: 'Flutter',
           debugShowCheckedModeBanner: false,
+
+          //Theme
           theme: ThemeData(
             primarySwatch: Colors.blue,
             buttonTheme: const ButtonThemeData(
@@ -42,10 +45,29 @@ class MyApp extends StatelessWidget {
                   Radius.circular(50),
                 ),
               ),
+              buttonColor: Colors.black
+            ),
+            textTheme: TextTheme(
+              bodySmall: TextStyle(
+                fontSize: 12,
+              ),
+              bodyMedium: TextStyle(
+                fontSize: 18,
+              ),
+              bodyLarge: TextStyle(
+                fontSize: 24,
+              ),
             ),
           ),
+
+          //Routes
           home:
               auth.isAuth() ? const HomeScreen() : const AuthenticationScreen(),
+          initialRoute: HomeScreen.routeName,
+          routes: {
+            HomeScreen.routeName: (ctx) => const HomeScreen(),
+            ChatScreen.routeName: (ctx) => const ChatScreen(),
+          },
         ),
       ),
     );

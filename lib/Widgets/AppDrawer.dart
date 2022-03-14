@@ -37,7 +37,7 @@ class AppDrawer extends StatelessWidget {
                     softWrap: false,
                   ),
                   leading: const Icon(
-                    Icons.login,
+                    Icons.person,
                     color: Colors.white,
                   ),
                   onTap: () {},

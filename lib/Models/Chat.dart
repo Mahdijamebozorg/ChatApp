@@ -8,8 +8,10 @@ class Chat {
   List<Message> messages;
   final DateTime createdDate;
   final ChatType type;
+  final String id;
 
   Chat({
+    required this.id,
     required this.users,
     required this.messages,
     required this.type,

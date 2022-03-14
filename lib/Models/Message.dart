@@ -3,7 +3,9 @@ class Message {
   String text;
 
   ///message sending time
-  final sendTime;
+  final DateTime sendTime;
+
+  final String senderId;
 
   ///is this message edited by user
   bool isEdited;
@@ -13,6 +15,7 @@ class Message {
 
   Message({
     required this.text,
+    required this.senderId,
     required this.sendTime,
     this.isEdited = false,
     this.usersSeen = const {},
