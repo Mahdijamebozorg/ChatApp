@@ -40,130 +40,132 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // final Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
-        //app bar
-        appBar: AppBar(
-          flexibleSpace: SafeArea(
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //user
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 50,
-                        margin: EdgeInsets.only(left: 50),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Image.asset("assets/images/user.png"), //test
-                        ),
+      //app bar
+      appBar: AppBar(
+        flexibleSpace: SafeArea(
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //user
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 50,
+                      margin: EdgeInsets.only(left: 50),
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage(
+                          "assets/images/user.png",
+                        ), //test
                       ),
-                      //datails
-                      Container(
-                        height: 50,
-                        margin: EdgeInsets.only(left: 15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            //name
-                            Text(
-                              otherUser.name,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            //last seen
-                            Text(
-                              (otherUser.lastSeen).toString(),
-                              style: Theme.of(context).textTheme.bodySmall,
-                            )
-                          ],
-                        ),
+                    ),
+                    //datails
+                    Container(
+                      height: 50,
+                      margin: EdgeInsets.only(left: 15),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //name
+                          Text(
+                            otherUser.name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          //last seen
+                          Text(
+                            (otherUser.lastSeen).toString(),
+                            style: Theme.of(context).textTheme.titleSmall,
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                  //buttons
-                  Row(
-                    children: [
-                      //search button
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.search,
-                          color: Theme.of(context).primaryIconTheme.color,
-                        ),
+                    ),
+                  ],
+                ),
+                //buttons
+                Row(
+                  children: [
+                    //search button
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
-                      //more button
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.more_vert,
-                          color: Theme.of(context).primaryIconTheme.color,
-                        ),
+                    ),
+                    //more button
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
-                    ],
-                  )
-                ],
-              ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ),
+      ),
 
-        //body
-        body: chat.messages.isNotEmpty
-            ? ListView.builder(
-                shrinkWrap: true,
-                itemCount: chat.messages.length,
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                itemBuilder: (context, index) => Align(
-                  alignment: currentUser.id == chat.messages[index].senderId
-                      ? Alignment.topRight
-                      : Alignment.topLeft,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    color: (chat.messages[index].senderId == currentUser.id
-                        ? Colors.blue[200]
-                        : Colors.grey.shade400),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            chat.messages[index].text,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
+      //body
+      body: chat.messages.isNotEmpty
+          ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: chat.messages.length,
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              itemBuilder: (context, index) => Align(
+                alignment: currentUser.id == chat.messages[index].senderId
+                    ? Alignment.topRight
+                    : Alignment.topLeft,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  color: (chat.messages[index].senderId == currentUser.id
+                      ? Colors.blue[700]
+                      : Colors.grey.shade700),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          chat.messages[index].text,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        Positioned(
-                          right: 5,
-                          bottom: 2,
-                          child: Text(
-                            //test
-                            "22:53",
-                            // chat.messages[index].sendTime.hour.toString() ??
-                            //     "TimeError",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
+                      ),
+                      Positioned(
+                        right: 5,
+                        bottom: 2,
+                        child: Text(
+                          //test
+                          "22:53",
+                          // chat.messages[index].sendTime.hour.toString() ??
+                          //     "TimeError",
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        Positioned(
-                          left: 2,
-                          bottom: 2,
-                          child: chat.messages[index].senderId == currentUser.id
-                              ? Icon(
-                                  chat.messages[index].usersSeen.isNotEmpty
-                                      ? Icons.keyboard_double_arrow_left_sharp
-                                      : Icons.arrow_back_ios_new,
-                                  size: 10,
-                                )
-                              : Container(),
-                        )
-                      ],
-                    ),
+                      ),
+                      Positioned(
+                        left: 2,
+                        bottom: 2,
+                        child: chat.messages[index].senderId == currentUser.id
+                            ? Icon(
+                                chat.messages[index].usersSeen.isNotEmpty
+                                    ? Icons.keyboard_double_arrow_left_sharp
+                                    : Icons.arrow_back_ios_new,
+                                size: 10,
+                              )
+                            : Container(),
+                      )
+                    ],
                   ),
                 ),
-              )
-            : const Text("No chat yet!"),
-        bottomSheet: ChatInputs());
+              ),
+            )
+          : const Text("No chat yet!"),
+      bottomSheet: ChatInputs(),
+    );
   }
 }

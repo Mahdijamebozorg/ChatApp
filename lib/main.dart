@@ -38,26 +38,19 @@ class MyApp extends StatelessWidget {
 
           //Theme
           theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.indigo,
+            scaffoldBackgroundColor: Colors.black87,
+            //buttons theme
             buttonTheme: const ButtonThemeData(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(50),
                 ),
               ),
-              buttonColor: Colors.black
+              buttonColor: Colors.black,
             ),
-            textTheme: TextTheme(
-              bodySmall: TextStyle(
-                fontSize: 12,
-              ),
-              bodyMedium: TextStyle(
-                fontSize: 18,
-              ),
-              bodyLarge: TextStyle(
-                fontSize: 24,
-              ),
-            ),
+            //text thmeme
+            textTheme: Typography.whiteCupertino,
           ),
 
           //Routes

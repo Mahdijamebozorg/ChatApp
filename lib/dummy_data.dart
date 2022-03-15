@@ -115,7 +115,7 @@ List<Chat> dummy_chats = [
         sendTime: DateTime.now().subtract(const Duration(hours: 5)),
       )
     ],
-    type: ChatType.group,
+    type: ChatType.user,
     createdDate: DateTime.now().subtract(const Duration(days: 1)),
   ),
   Chat(
