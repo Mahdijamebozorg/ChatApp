@@ -43,7 +43,37 @@ List<Chat> dummy_chats = [
         senderId: "p1",
         sendTime: DateTime.now().subtract(const Duration(hours: 3)),
         usersSeen: {},
-      )
+      ),
+      Message(
+        text: "Khoooobiiiii",
+        senderId: "p1",
+        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
+        usersSeen: {},
+      ),
+      Message(
+        text: "Khoooobiiiii",
+        senderId: "p1",
+        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
+        usersSeen: {},
+      ),
+      Message(
+        text: "Khoooobiiiii",
+        senderId: "p1",
+        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
+        usersSeen: {},
+      ),
+      Message(
+        text: "Khoooobiiiii",
+        senderId: "p1",
+        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
+        usersSeen: {},
+      ),
+      Message(
+        text: "Khoooobiiiii",
+        senderId: "p1",
+        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
+        usersSeen: {},
+      ),
     ],
     type: ChatType.user,
     createdDate: DateTime.now().subtract(const Duration(days: 1)),
