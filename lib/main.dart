@@ -12,28 +12,37 @@ void main() {
   runApp(const MyApp());
 }
 
+const _backEndAddress = "www.firebase.google.com";
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //these providers are used in entire app so we used them here
     return MultiProvider(
       providers: [
+        //Auth provider
         ChangeNotifierProvider<Auth>(
           create: (ctx) => Auth(),
         ),
+
+        //Chats provider
         ChangeNotifierProxyProvider<Auth, Chats>(
           create: (ctx) => Chats("", "", dummy_chats), //test
+          //we must have token in Chats to manage chats
           update: (ctx, auth, chats) => Chats(
-            auth.currentUser?.id,
+            auth.userId,
             auth.token,
-            chats?.allChats ?? [],
+            chats == null ? [] : chats.allChats,
           ),
         ),
       ],
+
+      //all widget are based on auth data and update with its changes
       child: Consumer<Auth>(
         builder: (context, auth, ch) => MaterialApp(
-          title: 'Flutter',
+          title: 'Chat App',
           debugShowCheckedModeBanner: false,
 
           //Theme
@@ -47,19 +56,40 @@ class MyApp extends StatelessWidget {
                   Radius.circular(50),
                 ),
               ),
-              buttonColor: Colors.black,
+              buttonColor: Colors.white,
             ),
             //text thmeme
             textTheme: Typography.whiteCupertino,
           ),
 
           //Routes
-          home:
-              auth.isAuth() ? const HomeScreen() : const AuthenticationScreen(),
-          initialRoute: HomeScreen.routeName,
           routes: {
-            HomeScreen.routeName: (ctx) => const HomeScreen(),
-            ChatScreen.routeName: (ctx) => const ChatScreen(),
+            "/": (_) => auth.isAuth()
+                //program is connected and user is Auth
+                ? const HomeScreen(
+                    isConnecting: false,
+                    backEndAddress: _backEndAddress,
+                  )
+
+                //opening program
+                : FutureBuilder(
+                    //wait to connect
+                    future: auth.tryAutoLogin(),
+                    builder: (_, snapShot) =>
+                        snapShot.connectionState == ConnectionState.waiting
+                            //is connecting
+                            ? const HomeScreen(
+                                isConnecting: true,
+                                backEndAddress: _backEndAddress,
+                              )
+                            //loged out
+                            : const AuthenticationScreen(),
+                  ),
+            HomeScreen.routeName: (_) => const HomeScreen(
+                  isConnecting: false,
+                  backEndAddress: _backEndAddress,
+                ),
+            ChatScreen.routeName: (_) => const ChatScreen(),
           },
         ),
       ),

@@ -31,6 +31,14 @@ class _ChatInputsState extends State<ChatInputs> {
     super.dispose();
   }
 
+  bool _checkInput(String text) {
+    if (text.isEmpty) return false;
+    for (var char in text.characters) {
+      if (char != ' ' && char != '\n') return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -70,7 +78,7 @@ class _ChatInputsState extends State<ChatInputs> {
             ),
           ),
 
-          _textController.text.isNotEmpty
+          _checkInput(_textController.text)
               //send message
               ? IconButton(
                   icon: const Icon(

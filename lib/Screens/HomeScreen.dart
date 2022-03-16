@@ -1,13 +1,23 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:chatapp/Models/User.dart';
 import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Widgets/AppDrawer.dart';
 import 'package:chatapp/Widgets/ChatItem.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final bool isConnecting;
+  final String backEndAddress;
+  const HomeScreen({
+    required this.isConnecting,
+    required this.backEndAddress,
+    Key? key,
+  }) : super(key: key);
+
   static const routeName = "./home";
 
   @override
@@ -15,6 +25,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<String> appConnectionState() async {
+    if (widget.isConnecting) {
+      return "Connecting...";
+    }
+    try {
+      final response = await InternetAddress.lookup(widget.backEndAddress);
+      print(response);
+      if (response.isNotEmpty && response[0].rawAddress.isNotEmpty) {
+        return "Connected";
+      } else {
+        return "Connecting...";
+      }
+    } on SocketException catch (message) {
+      print(message);
+      return "Waiting...";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size _screenSize = MediaQuery.of(context).size;
@@ -23,7 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Connecitvity"),
+          title: FutureBuilder(
+            future: appConnectionState(),
+            builder: (context, snapshot) =>
+                snapshot.connectionState == ConnectionState.waiting
+                    ? const Text("Connecting...")
+                    : Text(snapshot.data as String),
+          ),
           actions: [
             //search button
             IconButton(

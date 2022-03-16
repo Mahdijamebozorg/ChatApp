@@ -2,10 +2,10 @@ import 'package:chatapp/Models/Chat.dart';
 import 'package:flutter/material.dart';
 
 class Chats with ChangeNotifier {
-  final userId;
-  final token;
+  final _token;
+  final _userId;
   final List<Chat> _chats;
-  Chats(this.userId, this.token, this._chats);
+  Chats(this._token, this._userId, this._chats);
 
   List<Chat> get allChats {
     return [..._chats];

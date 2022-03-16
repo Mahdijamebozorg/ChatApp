@@ -1,12 +1,12 @@
 import 'package:chatapp/Models/Chat.dart';
-import 'package:chatapp/Models/Message.dart';
 import 'package:chatapp/Models/User.dart';
+import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Widgets/ChatInput.dart';
 import 'package:chatapp/Widgets/ChatMessages.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-const double inputFieldHeight = 50;
+const double inputFieldHeight = 45;
 
 class ChatScreen extends StatefulWidget {
   static const routeName = "/chatScreen";
@@ -46,8 +46,8 @@ class _ChatScreenState extends State<ChatScreen> {
     final AppBar _appBar;
 
     // final Size _screenSize = MediaQuery.of(context).size;
-    return Consumer(
-      builder: (context, value, child) => Scaffold(
+    return Consumer<Chats>(
+      builder: (context, chats, child) => Scaffold(
         //app bar
         appBar: AppBar(
           flexibleSpace: SafeArea(
@@ -122,6 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
         //body
         body: chat.messages.isNotEmpty
             ? Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //messages
                   Expanded(
