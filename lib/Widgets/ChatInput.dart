@@ -1,11 +1,15 @@
+import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/Message.dart';
+import 'package:chatapp/Providers/User.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 const Color backGround = Color.fromARGB(255, 46, 45, 45);
 
 class ChatInputs extends StatefulWidget {
-  final Function addMessage;
+  final User currentUser;
   const ChatInputs({
-    required this.addMessage,
+    required this.currentUser,
     Key? key,
   }) : super(key: key);
 
@@ -74,7 +78,6 @@ class _ChatInputsState extends State<ChatInputs> {
               ),
               controller: _textController,
               focusNode: _textFocus,
-              onSubmitted: (text) {},
             ),
           ),
 
@@ -87,7 +90,29 @@ class _ChatInputsState extends State<ChatInputs> {
                   color: Theme.of(context).primaryIconTheme.color,
                   highlightColor: Theme.of(context).scaffoldBackgroundColor,
                   splashColor: Theme.of(context).scaffoldBackgroundColor,
-                  onPressed: () {},
+                  onPressed: () {
+                    final chat = Provider.of<Chat>(context, listen: false);
+                    if (chat.canSendMessage(widget.currentUser)) {
+                      chat.sendMessage(
+                        Message(
+                          text: _textController.text,
+                          senderId: widget.currentUser.id,
+                          sendTime: DateTime.now(),
+                        ),
+                        widget.currentUser,
+                      );
+                      //show error
+                    } else {
+                      Scaffold.of(context).showBottomSheet(
+                        (context) => const Center(
+                          child: Card(
+                            child: Text("Can't send Message"),
+                          ),
+                        ),
+                      );
+                    }
+                    _textController.clear();
+                  },
                 )
               //other inputs
               : Row(

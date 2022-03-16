@@ -1,5 +1,5 @@
-import 'package:chatapp/Models/Chat.dart';
-import 'package:chatapp/Models/User.dart';
+import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/User.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessages extends StatefulWidget {

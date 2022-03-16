@@ -1,4 +1,6 @@
-class Message {
+import 'package:flutter/foundation.dart';
+
+class Message with ChangeNotifier {
   ///message text
   String text;
 

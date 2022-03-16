@@ -1,36 +1,41 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:chatapp/Models/User.dart';
+import 'package:chatapp/Providers/User.dart';
 
 class Auth with ChangeNotifier {
-  //a temp user for testing
-  User? currentUser = User(
-    name: "Mahdi",
-    id: "p1",
-    lastSeen: DateTime.now(),
-    bio: "bio",
-    username: "username",
-    profileUrls: [],
-  );
-
   String _userId = "";
   String _token = "";
+
+  User? currentUser;
+
+  //a temp user for testing
+  Auth() {
+    currentUser = User(
+      token,
+      "p1",
+      "Mahdi",
+      DateTime.now(),
+      "bio",
+      "username",
+      [],
+    );
+  }
 
   ///login and get
   Future login() async {
     final response = await http.read(Uri(), headers: {});
     final data = json.decode(response);
     currentUser = User(
-      id: data["id"],
-      name: data["name"],
-      username: data["username"],
-      bio: data["bio"],
-      lastSeen: DateTime.now(),
-      profileUrls: data["profiles"],
+      token,
+      data["id"],
+      data["name"],
+      DateTime.now(),
+      data["bio"],
+      data["username"],
+      data["profiles"],
     );
     notifyListeners();
   }

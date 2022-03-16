@@ -32,6 +32,7 @@ dependencies:
   provider: any
   http: any
   shared_preferences: any
+  connectivity_plus: any
   # stack: any
 
 

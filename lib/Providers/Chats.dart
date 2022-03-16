@@ -1,4 +1,4 @@
-import 'package:chatapp/Models/Chat.dart';
+import 'package:chatapp/Providers/Chat.dart';
 import 'package:flutter/material.dart';
 
 class Chats with ChangeNotifier {
@@ -11,20 +11,20 @@ class Chats with ChangeNotifier {
     return [..._chats];
   }
 
-  List<Chat> get chatsWithUser {
-    return _chats.where((chat) => chat.type == ChatType.user).toList();
+  List<PrivateChat> get chatsWithUser {
+    return _chats.whereType<PrivateChat>().toList();
   }
 
-  List<Chat> get chatsWithGroup {
-    return _chats.where((chat) => chat.type == ChatType.group).toList();
+  List<GroupChat> get chatsWithGroup {
+    return _chats.whereType<GroupChat>().toList();
   }
 
-  List<Chat> get chatsWithBot {
-    return _chats.where((chat) => chat.type == ChatType.bot).toList();
+  List<BotChat> get chatsWithBot {
+    return _chats.whereType<BotChat>().toList();
   }
 
-  List<Chat> get chatsWithChannel {
-    return _chats.where((chat) => chat.type == ChatType.channel).toList();
+  List<ChannelChat> get chatsWithChannel {
+    return _chats.whereType<ChannelChat>().toList();
   }
 
   ///adding chat

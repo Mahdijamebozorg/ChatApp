@@ -1,5 +1,5 @@
-import 'package:chatapp/Models/Chat.dart';
-import 'package:chatapp/Models/User.dart';
+import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:flutter/material.dart';
 
@@ -16,10 +16,7 @@ class ChatItem extends StatelessWidget {
   void selectChat(BuildContext context, Chat chat, User user) {
     Navigator.of(context).pushNamed(
       ChatScreen.routeName,
-      arguments: {
-        "chat": chat,
-        "user": user,
-      },
+      arguments: {"chatId": chat.id},
     );
   }
 

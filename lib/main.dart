@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
                   isConnecting: false,
                   backEndAddress: _backEndAddress,
                 ),
-            ChatScreen.routeName: (_) => const ChatScreen(),
+            ChatScreen.routeName: (_) => ChatScreen(),
           },
         ),
       ),
