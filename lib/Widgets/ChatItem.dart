@@ -21,6 +21,16 @@ class ChatItem extends StatelessWidget {
     );
   }
 
+  String removeWhiteSpaces(String text) {
+    String temp = "";
+    String lastChar = '';
+    for (var char in text.characters) {
+      if (char != '\n' && (lastChar != ' ' || char != ' ')) temp += char;
+      lastChar = char;
+    }
+    return temp;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<Chat>(
@@ -34,12 +44,12 @@ class ChatItem extends StatelessWidget {
 
         //user name
         title: Text(
-          chat.chatTitle(currentUser),
+          removeWhiteSpaces(chat.chatTitle(currentUser)),
           style: Theme.of(context).textTheme.bodyMedium,
         ),
 
         //last message
-        subtitle: Text(chat.messages.last.text,
+        subtitle: Text(removeWhiteSpaces(chat.messages.last.text),
             style: Theme.of(context).textTheme.bodySmall),
 
         //profile phot
