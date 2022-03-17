@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 
 import './Chat.dart';
@@ -31,7 +33,7 @@ class BotChat extends Chat {
     try {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
-    } on Exception catch (message) {
+    } on SocketException catch (message) {
       print(message);
     }
     _messages.add(newMessage);
@@ -45,7 +47,7 @@ class BotChat extends Chat {
     try {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
-    } on Exception catch (message) {
+    } on SocketException catch (message) {
       print(message);
     }
     if (totalRemove) {

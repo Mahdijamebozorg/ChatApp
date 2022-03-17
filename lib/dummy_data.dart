@@ -4,29 +4,15 @@ import 'package:chatapp/Providers/Chat/GroupChat.dart';
 import 'package:chatapp/Providers/Message.dart';
 import 'package:chatapp/Providers/User.dart';
 
+User mahdi =
+    User("tempToken", "p1", "Mahdi", DateTime.now(), false, "", "", []);
+User ali = User("tempToken", "p2", "Ali", DateTime.now(), true, "", "", []);
+User hani = User("tempToken", "p3", "Hani", DateTime.now(), false, "", "", []);
+
 List<Chat> dummy_chats = [
   PrivateChat(
     "chat1",
-    [
-      User(
-        "tempToken",
-        "p1",
-        "Mahdi",
-        DateTime.now(),
-        "",
-        "",
-        [],
-      ),
-      User(
-        "tempToken",
-        "p2",
-        "Ali",
-        DateTime.now(),
-        "",
-        "",
-        [],
-      )
-    ],
+    [mahdi, ali],
     [
       Message(
         text: "salaaaaaaaam",
@@ -84,36 +70,9 @@ List<Chat> dummy_chats = [
   ),
   GroupChat(
     "chat2",
+    [mahdi, hani, ali],
     [
-      User(
-        "tempToken",
-        "p1",
-        "Mahdi",
-        DateTime.now(),
-        "",
-        "",
-        [],
-      ),
-      User(
-        "tempToken",
-        "p3",
-        "Hani",
-        DateTime.now(),
-        "",
-        "",
-        [],
-      )
-    ],
-    [
-      User(
-        "_token",
-        "p1",
-        "Mahdi",
-        DateTime.now(),
-        "",
-        "",
-        [],
-      ),
+      mahdi,
     ],
     "Chat Name",
     [],

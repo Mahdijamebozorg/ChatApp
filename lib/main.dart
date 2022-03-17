@@ -38,6 +38,12 @@ class MyApp extends StatelessWidget {
             chats == null ? [] : chats.allChats,
           ),
         ),
+
+        ChangeNotifierProxyProvider<Auth, User>(
+          lazy: false,
+          create: (_) => User("", "", "", DateTime.now(), false, "", "", []),
+          update: (_, auth, user) => auth.currentUser!,
+        )
       ],
 
       //all widget are based on auth data and update with its changes
@@ -79,13 +85,11 @@ class MyApp extends StatelessWidget {
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
                             //is connecting
-                            ? ChangeNotifierProvider<User>.value(
-                                value: auth.currentUser!,
-                                child: const HomeScreen(
-                                  isConnecting: true,
-                                  backEndAddress: _backEndAddress,
-                                ),
+                            ? const HomeScreen(
+                                isConnecting: true,
+                                backEndAddress: _backEndAddress,
                               )
+
                             //loged out
                             : const AuthenticationScreen(),
                   ),

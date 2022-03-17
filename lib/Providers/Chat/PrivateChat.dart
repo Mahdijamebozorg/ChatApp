@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 
 import './Chat.dart';
@@ -27,8 +29,9 @@ class PrivateChat extends Chat {
     }
     final http.Response response;
     try {
-      response = await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
-    } on http.ClientException catch (message) {
+      response =
+          await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
+    } on SocketException catch (message) {
       print(message);
     }
     _messages.add(newMessage);
@@ -40,8 +43,9 @@ class PrivateChat extends Chat {
       Message message, User currentUser, bool totalRemove) async {
     final http.Response response;
     try {
-      response = await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
-    } on http.ClientException catch (message) {
+      response =
+          await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
+    } on SocketException catch (message) {
       print(message);
     }
     if (totalRemove) {

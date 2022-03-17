@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -43,27 +45,32 @@ abstract class Chat with ChangeNotifier {
 
   ///name of person or group
   String chatTitle(User currentUser) {
+    print("Errorrrr: parent method called intead of child!");
     return "Title";
   }
 
   ///last seen of person or members count
   String chatSubtitle(User currentUser) {
+    print("Errorrrr: parent method called intead of child!");
     return "Subtitle";
   }
 
   ///if user can send message to this chat
   bool canSendMessage(User user) {
+    print("Errorrrr: parent method called intead of child!");
     return false;
   }
 
   Future sendMessage(Message newMessage, User currentUser) async {
+    print("Errorrrr: parent method called intead of child!");
     if (!canSendMessage(currentUser)) {
       throw Exception("User can't send message");
     }
     final http.Response response;
     try {
-      response = await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
-    } on http.ClientException catch (message) {
+      response =
+          await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
+    } on SocketException catch (message) {
       print(message);
     }
     _messages.add(newMessage);
@@ -72,10 +79,12 @@ abstract class Chat with ChangeNotifier {
 
   Future removeMessage(
       Message message, User currentUser, bool totalRemove) async {
+    print("Errorrrr: parent method called intead of child!");
     final http.Response response;
     try {
-      response = await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
-    } on http.ClientException catch (message) {
+      response =
+          await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
+    } on SocketException catch (message) {
       print(message);
     }
     if (totalRemove) {
@@ -91,6 +100,7 @@ abstract class Chat with ChangeNotifier {
   }
 
   List<String> profiles(User currentUser) {
+    print("Errorrrr: parent method called intead of child!");
     return [];
   }
 }

@@ -26,7 +26,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String _connectivityState = "Waiting...";
 
-  Future checkConnectionState(User user) async {
+  Future checkConnectionState(User user, Auth auth) async {
     //listen to device internet changes
     Connectivity().onConnectivityChanged.listen(
       (ConnectivityResult result) async {
@@ -38,16 +38,22 @@ class _HomeScreenState extends State<HomeScreen> {
           if (user.isOnline) await user.toggleOnline();
           setState(() {});
         }
+
         //if internet is on
         else {
           //state before connect
           _connectivityState = "Connecing...";
           setState(() {});
+
           //check connection to server
-          final response = await http.get(Uri.parse(widget.backEndAddress));
+          final response = await http.get(Uri.parse(widget.backEndAddress),
+              headers: {"token": auth.token});
+
           print("status code: ${response.statusCode}");
+
           //first digit of status code
           switch (int.parse(response.statusCode.toString()[0])) {
+
             //if can connect to server
             //200-299 status code
             case 2:
@@ -85,10 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
+    final auth = Provider.of<Auth>(context, listen: false);
     final Size _screenSize = MediaQuery.of(context).size;
     print("State Managing:  HomeScreen Rebuilt");
     return FutureBuilder(
-      future: checkConnectionState(user),
+      future: checkConnectionState(user, auth),
       builder: (_, snapShot) {
         return DefaultTabController(
           initialIndex: 1,
