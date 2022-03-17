@@ -1,5 +1,10 @@
-import 'package:chatapp/Providers/Chat.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:chatapp/Providers/Chat/Chat.dart';
+import 'package:chatapp/Providers/Chat/PrivateChat.dart';
+import 'package:chatapp/Providers/Chat/GroupChat.dart';
+import 'package:chatapp/Providers/Chat/ChannelChat.dart';
+import 'package:chatapp/Providers/Chat/BotChat.dart';
 
 class Chats with ChangeNotifier {
   final _token;

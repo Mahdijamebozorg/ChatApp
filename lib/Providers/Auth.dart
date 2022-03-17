@@ -1,7 +1,6 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:chatapp/Providers/User.dart';
 
@@ -18,6 +17,7 @@ class Auth with ChangeNotifier {
       "p1",
       "Mahdi",
       DateTime.now(),
+      false,
       "bio",
       "username",
       [],
@@ -33,6 +33,7 @@ class Auth with ChangeNotifier {
       data["id"],
       data["name"],
       DateTime.now(),
+      false,
       data["bio"],
       data["username"],
       data["profiles"],

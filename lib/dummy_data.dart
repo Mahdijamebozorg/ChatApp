@@ -1,4 +1,6 @@
-import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/Chat/Chat.dart';
+import 'package:chatapp/Providers/Chat/PrivateChat.dart';
+import 'package:chatapp/Providers/Chat/GroupChat.dart';
 import 'package:chatapp/Providers/Message.dart';
 import 'package:chatapp/Providers/User.dart';
 
@@ -114,6 +116,7 @@ List<Chat> dummy_chats = [
       ),
     ],
     "Chat Name",
+    [],
     [
       Message(
         text: "Hello you",

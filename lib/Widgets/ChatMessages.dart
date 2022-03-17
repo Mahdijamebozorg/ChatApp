@@ -1,4 +1,4 @@
-import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,5 @@
 import 'package:chatapp/Providers/Auth.dart';
-import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Widgets/ChatInput.dart';
@@ -51,6 +51,7 @@ class ChatScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(left: 15),
                       child: ChangeNotifierProvider<Chat>.value(
                         value: tempChatData,
+                        //chat data
                         child: Consumer<Chat>(
                           builder: (context, chat, child) => Column(
                             mainAxisAlignment: MainAxisAlignment.center,

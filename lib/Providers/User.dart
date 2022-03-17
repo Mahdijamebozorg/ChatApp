@@ -6,6 +6,7 @@ class User with ChangeNotifier {
   final String _id;
   String _name;
   DateTime _lastSeen;
+  bool _isOnline;
   String _username;
   String _bio;
   List<String> _profileUrls;
@@ -15,6 +16,7 @@ class User with ChangeNotifier {
     this._id,
     this._name,
     this._lastSeen,
+    this._isOnline,
     this._bio,
     this._username,
     this._profileUrls,
@@ -59,6 +61,11 @@ class User with ChangeNotifier {
     return _id;
   }
 
+  Future toggleOnline() async {
+    final response = await http.post(Uri.parse("https://test.com"));
+    _isOnline = !_isOnline;
+  }
+
   String get name {
     return _name;
   }
@@ -77,5 +84,9 @@ class User with ChangeNotifier {
 
   List<String> get profileUrls {
     return [..._profileUrls];
+  }
+
+  bool get isOnline {
+    return _isOnline;
   }
 }

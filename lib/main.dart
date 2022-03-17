@@ -1,5 +1,6 @@
 import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chats.dart';
+import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/AuthenticatinScreen.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:chatapp/Screens/HomeScreen.dart';
@@ -12,7 +13,7 @@ void main() {
   runApp(const MyApp());
 }
 
-const _backEndAddress = "www.firebase.google.com";
+const _backEndAddress = "http://firebase.google.com"; //"http://telegram.org";
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -78,17 +79,16 @@ class MyApp extends StatelessWidget {
                     builder: (_, snapShot) =>
                         snapShot.connectionState == ConnectionState.waiting
                             //is connecting
-                            ? const HomeScreen(
-                                isConnecting: true,
-                                backEndAddress: _backEndAddress,
+                            ? ChangeNotifierProvider<User>.value(
+                                value: auth.currentUser!,
+                                child: const HomeScreen(
+                                  isConnecting: true,
+                                  backEndAddress: _backEndAddress,
+                                ),
                               )
                             //loged out
                             : const AuthenticationScreen(),
                   ),
-            HomeScreen.routeName: (_) => const HomeScreen(
-                  isConnecting: false,
-                  backEndAddress: _backEndAddress,
-                ),
             ChatScreen.routeName: (_) => ChatScreen(),
           },
         ),

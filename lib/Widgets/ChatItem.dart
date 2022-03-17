@@ -1,53 +1,55 @@
-import 'package:chatapp/Providers/Chat.dart';
+import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatItem extends StatelessWidget {
-  final Chat chat;
+  final String chatId;
   final User currentUser;
 
   const ChatItem({
-    required this.chat,
+    required this.chatId,
     required this.currentUser,
     Key? key,
   }) : super(key: key);
 
-  void selectChat(BuildContext context, Chat chat, User user) {
+  void selectChat(BuildContext context, String chatId, User user) {
     Navigator.of(context).pushNamed(
       ChatScreen.routeName,
-      arguments: {"chatId": chat.id},
+      arguments: {"chatId": chatId},
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    User otherUser = chat.users.firstWhere((user) => user.id != currentUser.id);
-    return ListTile(
-      hoverColor: Colors.white.withOpacity(0.1),
-      //open chat
-      onTap: () => selectChat(context, chat, currentUser),
+    return Consumer<Chat>(
+      builder: (context, chat, ch) => ListTile(
+        hoverColor: Colors.white.withOpacity(0.1),
+        //open chat
+        onTap: () => selectChat(context, chatId, currentUser),
 
-      //options
-      onLongPress: () {},
+        //options
+        onLongPress: () {},
 
-      //user name
-      title: Text(
-        otherUser.name,
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
+        //user name
+        title: Text(
+          chat.chatTitle(currentUser),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
 
-      //last message
-      subtitle: Text(chat.messages.last.text,
-          style: Theme.of(context).textTheme.bodySmall),
+        //last message
+        subtitle: Text(chat.messages.last.text,
+            style: Theme.of(context).textTheme.bodySmall),
 
-      //profile phot
-      leading: CircleAvatar(
-        backgroundImage: otherUser.profileUrls.isEmpty
-            ? const AssetImage("assets/images/user.png")
-            : NetworkImage(
-                otherUser.profileUrls[0],
-              ) as ImageProvider,
+        //profile phot
+        leading: CircleAvatar(
+          backgroundImage: chat.profiles(currentUser).isEmpty
+              ? const AssetImage("assets/images/user.png")
+              : NetworkImage(
+                  chat.profiles(currentUser)[0],
+                ) as ImageProvider,
+        ),
       ),
     );
   }
