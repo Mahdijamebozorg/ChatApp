@@ -77,8 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _connectivityState = "Connecting...";
             }
           } on SocketException catch (message) {
-            print("socket Exception: $message");
-            _connectivityState = "Waiting";
+            print("socketException in connection status: $message");
+            _connectivityState = "Waiting...";
           }
           setState(() {});
         }

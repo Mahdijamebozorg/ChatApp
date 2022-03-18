@@ -49,22 +49,24 @@ class Message with ChangeNotifier {
   }
 
   Map<String, DateTime> get usersSeen {
-    return {...usersSeen};
+    return {..._usersSeen};
   }
 
   Future editMessage(String messageText) async {
     final response = await http.get(Uri.parse("https://text.com"));
     _text = messageText;
+    notifyListeners();
   }
 
   ///seen this message by current user if hasn't seen yet
   Future seenMessage(User currentUser) async {
-    if (!_usersSeen.containsKey(currentUser.id)) {
-      await http.post(Uri.parse("https://test.com"));
+    if (_senderId != currentUser.id &&
+        !_usersSeen.containsKey(currentUser.id)) {
       _usersSeen.putIfAbsent(
         currentUser.id,
         () => DateTime.now(),
       );
+      return http.post(Uri.parse("https://test.com"));
     }
   }
 }

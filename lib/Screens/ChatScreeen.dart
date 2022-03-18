@@ -16,12 +16,14 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("State Managing:  ChatScreen Rebuilt");
     //route data
     final routeArg = ModalRoute.of(context)!.settings.arguments as Map;
     final String chatId = routeArg["chatId"];
 
     //providers data
-    final User currentUser = Provider.of<Auth>(context).currentUser!;
+    final User currentUser =
+        Provider.of<Auth>(context, listen: false).currentUser!;
     final tempChatData = Provider.of<Chats>(context, listen: false)
         .allChats
         .firstWhere((chat) => chat.id == chatId);
