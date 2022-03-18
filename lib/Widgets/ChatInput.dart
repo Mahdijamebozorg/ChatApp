@@ -90,14 +90,18 @@ class _ChatInputsState extends State<ChatInputs> {
                   color: Theme.of(context).primaryIconTheme.color,
                   highlightColor: Theme.of(context).scaffoldBackgroundColor,
                   splashColor: Theme.of(context).scaffoldBackgroundColor,
+                  //send message
                   onPressed: () {
                     final chat = Provider.of<Chat>(context, listen: false);
                     if (chat.canSendMessage(widget.currentUser)) {
                       chat.sendMessage(
                         Message(
-                          text: _textController.text,
-                          senderId: widget.currentUser.id,
-                          sendTime: DateTime.now(),
+                          chat.idGearator(),
+                          _textController.text,
+                          widget.currentUser.id,
+                          DateTime.now(),
+                          false,
+                          {widget.currentUser.id: DateTime.now()},
                         ),
                         widget.currentUser,
                       );

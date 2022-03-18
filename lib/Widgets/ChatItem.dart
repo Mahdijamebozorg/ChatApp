@@ -25,8 +25,15 @@ class ChatItem extends StatelessWidget {
     String temp = "";
     String lastChar = '';
     for (var char in text.characters) {
-      if (char != '\n' && (lastChar != ' ' || char != ' ')) temp += char;
-      lastChar = char;
+      //if is end of line and last char wasn't space, add a space
+      if (char == '\n') {
+        if (lastChar != ' ') temp += ' ';
+      }
+      //if there is one space, don't add other spaces
+      else if (char != ' ' || lastChar != ' ') {
+        temp += char;
+        lastChar = char;
+      }
     }
     return temp;
   }

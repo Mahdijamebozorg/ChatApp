@@ -1,5 +1,6 @@
 import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chat/Chat.dart';
+import 'package:chatapp/Providers/Message.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Widgets/ChatInput.dart';
@@ -15,45 +16,47 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routeArg = ModalRoute.of(context)!.settings.arguments as Map?;
-    final String chatId = routeArg!["chatId"];
+    //route data
+    final routeArg = ModalRoute.of(context)!.settings.arguments as Map;
+    final String chatId = routeArg["chatId"];
+
+    //providers data
     final User currentUser = Provider.of<Auth>(context).currentUser!;
     final tempChatData = Provider.of<Chats>(context, listen: false)
         .allChats
         .firstWhere((chat) => chat.id == chatId);
 
-    // final Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      //app bar
+      //appBar
       appBar: AppBar(
         flexibleSpace: SafeArea(
           child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //user
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+            child: ChangeNotifierProvider<Chat>.value(
+              value: tempChatData,
+              //chat information
+              child: Consumer<Chat>(
+                builder: (context, chat, child) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      height: 50,
-                      margin: const EdgeInsets.only(left: 50),
-                      child: const CircleAvatar(
-                        backgroundImage: AssetImage(
-                          "assets/images/user.png",
-                        ), //test
-                      ),
-                    ),
-                    //datails
-                    Container(
-                      height: 50,
-                      margin: const EdgeInsets.only(left: 15),
-                      child: ChangeNotifierProvider<Chat>.value(
-                        value: tempChatData,
-                        //chat data
-                        child: Consumer<Chat>(
-                          builder: (context, chat, child) => Column(
+                    //user
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 50,
+                          margin: const EdgeInsets.only(left: 50),
+                          child: const CircleAvatar(
+                            backgroundImage: AssetImage(
+                              "assets/images/user.png",
+                            ), //test
+                          ),
+                        ),
+                        //datails
+                        Container(
+                          height: 50,
+                          margin: const EdgeInsets.only(left: 15),
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -70,32 +73,32 @@ class ChatScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
+                    //options
+                    Row(
+                      children: [
+                        //search button
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.search,
+                            color: Theme.of(context).primaryIconTheme.color,
+                          ),
+                        ),
+                        //more button
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: Theme.of(context).primaryIconTheme.color,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
-                //options
-                Row(
-                  children: [
-                    //search button
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.search,
-                        color: Theme.of(context).primaryIconTheme.color,
-                      ),
-                    ),
-                    //more button
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Theme.of(context).primaryIconTheme.color,
-                      ),
-                    ),
-                  ],
-                )
-              ],
+              ),
             ),
           ),
         ),
@@ -111,9 +114,18 @@ class ChatScreen extends StatelessWidget {
                         children: [
                           //messages
                           Expanded(
-                            child: ChatMessages(
-                              chat: chat,
-                              currentUser: currentUser,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: chat.messages.length,
+                              padding:
+                                  const EdgeInsets.only(top: 10, bottom: 10),
+                              itemBuilder: (context, index) =>
+                                  ChangeNotifierProvider.value(
+                                value: chat.messages[index],
+                                child: ChatMessages(
+                                  currentUser: currentUser,
+                                ),
+                              ),
                             ),
                           ),
 

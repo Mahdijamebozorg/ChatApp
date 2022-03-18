@@ -61,11 +61,6 @@ class User with ChangeNotifier {
     return _id;
   }
 
-  Future toggleOnline() async {
-    final response = await http.post(Uri.parse("https://test.com"));
-    _isOnline = !_isOnline;
-  }
-
   String get name {
     return _name;
   }

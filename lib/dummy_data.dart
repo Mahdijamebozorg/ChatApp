@@ -8,63 +8,23 @@ User mahdi =
     User("tempToken", "p1", "Mahdi", DateTime.now(), false, "", "", []);
 User ali = User("tempToken", "p2", "Ali", DateTime.now(), true, "", "", []);
 User hani = User("tempToken", "p3", "Hani", DateTime.now(), false, "", "", []);
+Message tempMessage = Message(
+  "m1",
+  "salaaaaaaaam",
+  "p1",
+  DateTime.now().subtract(const Duration(hours: 5)),
+  false,
+  {
+    "p2": DateTime.now().subtract(const Duration(hours: 4)),
+  },
+);
 
 List<Chat> dummy_chats = [
   PrivateChat(
     "chat1",
     [mahdi, ali],
-    [
-      Message(
-        text: "salaaaaaaaam",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 5)),
-        usersSeen: {
-          "p2": DateTime.now().subtract(const Duration(hours: 4)),
-        },
-      ),
-      Message(
-        text: "hiiiiiiiii",
-        senderId: "p2",
-        sendTime: DateTime.now().subtract(const Duration(hours: 4)),
-        usersSeen: {"p1": DateTime.now().subtract(const Duration(hours: 4))},
-      ),
-      Message(
-        text: "Khoooobiiiii",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
-        usersSeen: {},
-      ),
-      Message(
-        text: "Khoooobiiiii",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
-        usersSeen: {},
-      ),
-      Message(
-        text: "Khoooobiiiii",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
-        usersSeen: {},
-      ),
-      Message(
-        text: "Khoooobiiiii",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
-        usersSeen: {},
-      ),
-      Message(
-        text: "Khoooobiiiii",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
-        usersSeen: {},
-      ),
-      Message(
-        text: "Khoooobiiiii",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 3)),
-        usersSeen: {},
-      ),
-    ],
+    [tempMessage, tempMessage, tempMessage],
+    [],
     ChatType.user,
     DateTime.now().subtract(const Duration(days: 1)),
   ),
@@ -76,18 +36,8 @@ List<Chat> dummy_chats = [
     ],
     "Chat Name",
     [],
-    [
-      Message(
-        text: "Hello you",
-        senderId: "p3",
-        sendTime: DateTime.now().subtract(const Duration(hours: 5)),
-      ),
-      Message(
-        text: "Salaaaaam",
-        senderId: "p1",
-        sendTime: DateTime.now().subtract(const Duration(hours: 5)),
-      )
-    ],
+    [tempMessage, tempMessage, tempMessage],
+    [],
     ChatType.user,
     DateTime.now().subtract(const Duration(days: 1)),
   ),

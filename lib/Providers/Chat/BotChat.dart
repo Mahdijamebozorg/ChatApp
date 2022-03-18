@@ -10,6 +10,7 @@ class BotChat extends Chat {
   //chat
   List<User> _users;
   List<Message> _messages;
+  List<Message> _unsentMessages;
   List<String> _profiles;
   final DateTime _createdDate;
   final ChatType _type;
@@ -20,22 +21,38 @@ class BotChat extends Chat {
     this._users,
     this._profiles,
     this._messages,
+    this._unsentMessages,
     this._type,
     this._createdDate,
-  ) : super(_id, _users, _messages, _type, _createdDate);
+  ) : super(_id, _users, _messages, _unsentMessages, _type, _createdDate);
 
   @override
   Future sendMessage(Message newMessage, User currentUser) async {
     if (!canSendMessage(currentUser)) {
       throw Exception("User can't send message");
     }
+
+    //in future temp messages will be saved on device
+    //await save message...
+    _unsentMessages.add(Message(
+      newMessage.id,
+      newMessage.text,
+      newMessage.senderId,
+      null,
+      newMessage.isEdited,
+      {},
+    ));
+    notifyListeners();
+
     final http.Response response;
     try {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
     } on SocketException catch (message) {
-      print(message);
+      print("socketException in sendMessage: $message");
     }
+    _unsentMessages.removeWhere((message) => message.id == newMessage.id);
+
     _messages.add(newMessage);
     notifyListeners();
   }
@@ -48,7 +65,7 @@ class BotChat extends Chat {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
     } on SocketException catch (message) {
-      print(message);
+      print("socketException in removeMessage: $message");
     }
     if (totalRemove) {
       _messages.remove(message);

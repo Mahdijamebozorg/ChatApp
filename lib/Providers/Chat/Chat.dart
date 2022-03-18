@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +12,7 @@ enum ChatType { user, group, channel, bot }
 abstract class Chat with ChangeNotifier {
   List<User> _users;
   List<Message> _messages;
+  List<Message> _unsentMessages;
   final DateTime _createdDate;
   final ChatType _type;
   final String _id;
@@ -19,6 +21,7 @@ abstract class Chat with ChangeNotifier {
     this._id,
     this._users,
     this._messages,
+    this._unsentMessages,
     this._type,
     this._createdDate,
   );
@@ -28,7 +31,11 @@ abstract class Chat with ChangeNotifier {
   }
 
   List<Message> get messages {
-    return [..._messages];
+    return [..._messages] + [..._unsentMessages];
+  }
+
+  List<Message> get unsentMessages {
+    return [..._unsentMessages];
   }
 
   DateTime get createdDate {
@@ -41,6 +48,11 @@ abstract class Chat with ChangeNotifier {
 
   String get id {
     return _id;
+  }
+
+  //testing
+  String idGearator() {
+    return (Random().nextInt(1000)).toString();
   }
 
   ///name of person or group
@@ -71,7 +83,7 @@ abstract class Chat with ChangeNotifier {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
     } on SocketException catch (message) {
-      print(message);
+      print("socketException in Chat: $message");
     }
     _messages.add(newMessage);
     notifyListeners();

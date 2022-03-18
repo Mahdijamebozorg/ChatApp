@@ -1,9 +1,10 @@
-import 'package:chatapp/Providers/Chat/Chat.dart';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chats.dart';
@@ -35,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
         //if internet is off
         if (result == ConnectivityResult.none) {
           _connectivityState = "Waiting...";
-          if (user.isOnline) await user.toggleOnline();
           setState(() {});
         }
 
@@ -46,41 +46,39 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {});
 
           //check connection to server
-          final response = await http.get(Uri.parse(widget.backEndAddress),
-              headers: {"token": auth.token});
+          final http.Response response;
+          try {
+            response = await http.get(Uri.parse(widget.backEndAddress),
+                headers: {"token": auth.token});
 
-          print("status code: ${response.statusCode}");
+            print("status code: ${response.statusCode}");
 
-          //first digit of status code
-          switch (int.parse(response.statusCode.toString()[0])) {
+            //first digit of status code
+            switch (int.parse(response.statusCode.toString()[0])) {
 
-            //if can connect to server
-            //200-299 status code
-            case 2:
-              _connectivityState = "Connected";
-              //become online
-              if (!user.isOnline) await user.toggleOnline();
-              break;
+              //if can connect to server
+              //200-299 status code
+              case 2:
+                _connectivityState = "Connected";
+                break;
 
-            //400-499 status code
-            case 4:
-              _connectivityState = "Client Error";
-              //become offline
-              if (user.isOnline) await user.toggleOnline();
-              break;
+              //400-499 status code
+              case 4:
+                _connectivityState = "Client Error";
+                break;
 
-            //500-599 status code
-            case 5:
-              _connectivityState = "Server Error";
-              //become offline
-              if (user.isOnline) await user.toggleOnline();
-              break;
+              //500-599 status code
+              case 5:
+                _connectivityState = "Server Error";
+                break;
 
-            //other promlems
-            default:
-              _connectivityState = "Connecting...";
-              //become offline
-              if (user.isOnline) await user.toggleOnline();
+              //other promlems
+              default:
+                _connectivityState = "Connecting...";
+            }
+          } on SocketException catch (message) {
+            print("socket Exception: $message");
+            _connectivityState = "Waiting";
           }
           setState(() {});
         }
