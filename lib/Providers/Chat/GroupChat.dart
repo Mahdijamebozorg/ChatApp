@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 import './Chat.dart';
 import 'package:chatapp/Providers/Message.dart';
@@ -29,7 +29,7 @@ class GroupChat extends Chat {
     this._unsentMessages,
     this._type,
     this._createdDate,
-  ) : super(_id, _users, _messages, _unsentMessages, _type, _createdDate);
+  ) : super(_id, _users, _messages, _unsentMessages, _createdDate);
 
   @override
   Future sendMessage(Message newMessage, User currentUser) async {
@@ -53,13 +53,12 @@ class GroupChat extends Chat {
     try {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
+      _unsentMessages.removeWhere((message) => message.id == newMessage.id);
+      _messages.add(newMessage);
     } on SocketException catch (message) {
-      print("socketException in sendMessage: $message");
+      if (kDebugMode)print("##### socketException in sendMessage: $message");
     }
-    _unsentMessages.removeWhere((message) => message.id == newMessage.id);
-
-    _messages.add(newMessage);
-    notifyListeners();
+      notifyListeners();
   }
 
   @override
@@ -70,7 +69,7 @@ class GroupChat extends Chat {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
     } on SocketException catch (message) {
-      print("socketException in removeMessage: $message");
+      if (kDebugMode)print("##### socketException in removeMessage: $message");
     }
     if (totalRemove && _admins.contains(currentUser)) {
       _messages.remove(message);

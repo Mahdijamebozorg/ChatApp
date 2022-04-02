@@ -1,15 +1,17 @@
+// import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+
+// import 'API_KEYS.dart';
 import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/AuthenticatinScreen.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:chatapp/Screens/HomeScreen.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
-
 import 'dummy_data.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 

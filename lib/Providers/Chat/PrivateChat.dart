@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import './Chat.dart';
@@ -22,11 +22,11 @@ class PrivateChat extends Chat {
     this._unsentMessages,
     this._type,
     this._createdDate,
-  ) : super(_id, _users, _messages, _unsentMessages, _type, _createdDate);
+  ) : super(_id, _users, _messages, _unsentMessages, _createdDate);
 
   @override
   Future sendMessage(Message newMessage, User currentUser) async {
-    print("PrivateChat: sendMessage called");
+    if (kDebugMode)print("##### PrivateChat: sendMessage called");
     if (!canSendMessage(currentUser)) {
       throw Exception("User can't send message");
     }
@@ -50,20 +50,18 @@ class PrivateChat extends Chat {
         headers: {},
         body: {},
       );
+      _unsentMessages.removeWhere((message) => message.id == newMessage.id);
+      _messages.add(newMessage);
     } on SocketException catch (message) {
-      print("socketException in sendMessage: $message");
+      if (kDebugMode)print("##### socketException in sendMessage: $message");
     }
-
-    _unsentMessages.removeWhere((message) => message.id == newMessage.id);
-
-    _messages.add(newMessage);
     notifyListeners();
   }
 
   //test
   // @override
   Future uploadMessages() async {
-    print("Chat: uploadMessage called");
+    if (kDebugMode)print("##### Chat: uploadMessage called");
 
     //upload all unsentMessages
     for (var message in _unsentMessages) {
@@ -77,7 +75,7 @@ class PrivateChat extends Chat {
         _unsentMessages.remove(message);
         notifyListeners();
       } on SocketException catch (message) {
-        print("socketException in uploadMessage: $message");
+        if (kDebugMode)print("##### socketException in uploadMessage: $message");
       }
     }
   }
@@ -93,7 +91,7 @@ class PrivateChat extends Chat {
         body: {},
       );
     } on SocketException catch (message) {
-      print("socketException in removeMessage: $message");
+      if (kDebugMode)print("##### socketException in removeMessage: $message");
     }
     if (totalRemove) {
       _messages.remove(message);

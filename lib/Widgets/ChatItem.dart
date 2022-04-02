@@ -4,6 +4,7 @@ import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///chat item preview in chats screen
 class ChatItem extends StatelessWidget {
   final String chatId;
   final User currentUser;
@@ -14,13 +15,19 @@ class ChatItem extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  void selectChat(BuildContext context, String chatId, User user) {
-    Navigator.of(context).pushNamed(
-      ChatScreen.routeName,
-      arguments: {"chatId": chatId},
+  ///select a chat and provide chat data for it
+  void selectChat(BuildContext context, Chat chat) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider<Chat>.value(
+          value: chat,
+          child: ChatScreen(),
+        ),
+      ),
     );
   }
 
+  ///remove message white spaces
   String removeWhiteSpaces(String text) {
     String temp = "";
     String lastChar = '';
@@ -44,7 +51,7 @@ class ChatItem extends StatelessWidget {
       builder: (context, chat, ch) => ListTile(
         hoverColor: Colors.white.withOpacity(0.1),
         //open chat
-        onTap: () => selectChat(context, chatId, currentUser),
+        onTap: () => selectChat(context, chat),
 
         //options
         onLongPress: () {},

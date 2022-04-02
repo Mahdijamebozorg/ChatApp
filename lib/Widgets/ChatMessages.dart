@@ -9,7 +9,7 @@ class ChatMessages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("State Managing: ChatMessages rebuilt");
+    if (kDebugMode)print("##### State Managing: ChatMessages rebuilt");
     return Consumer<Message>(
       builder: (context, message, child) {
         //seen message by current user

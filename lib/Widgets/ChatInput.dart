@@ -101,7 +101,7 @@ class _ChatInputsState extends State<ChatInputs> {
                           widget.currentUser.id,
                           DateTime.now(),
                           false,
-                          {widget.currentUser.id: DateTime.now()},
+                          {},
                         ),
                         widget.currentUser,
                       );
