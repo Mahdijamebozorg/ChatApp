@@ -9,7 +9,6 @@ import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/AuthenticatinScreen.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:chatapp/Screens/HomeScreen.dart';
-import 'dummy_data.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -32,18 +31,18 @@ class MyApp extends StatelessWidget {
 
         //Chats provider
         ChangeNotifierProxyProvider<Auth, Chats>(
-          create: (ctx) => Chats("", "", dummy_chats), //test
+          create: (ctx) => Chats("", "P1", []), //test
           //we must have token in Chats to manage chats
           update: (ctx, auth, chats) => Chats(
-            auth.userId,
             auth.token,
+            auth.userId,
             chats == null ? [] : chats.allChats,
           ),
         ),
 
         ChangeNotifierProxyProvider<Auth, User>(
           lazy: false,
-          create: (_) => User("", "", "", DateTime.now(), false, "", "", []),
+          create: (_) => User("", "", DateTime.now(), "", "", []),
           update: (_, auth, user) => auth.currentUser!,
         )
       ],

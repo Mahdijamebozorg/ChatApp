@@ -50,24 +50,28 @@ abstract class Chat with ChangeNotifier {
 
   ///name of person or group
   String chatTitle(User currentUser) {
-    if (kDebugMode)print("##### Errorrrr: parent method called intead of child!");
+    if (kDebugMode)
+      print("##### Errorrrr: parent method called intead of child!");
     return "Title";
   }
 
   ///last seen of person or members count
   String chatSubtitle(User currentUser) {
-    if (kDebugMode)print("##### Errorrrr: parent method called intead of child!");
+    if (kDebugMode)
+      print("##### Errorrrr: parent method called intead of child!");
     return "Subtitle";
   }
 
   ///if user can send message to this chat
   bool canSendMessage(User user) {
-    if (kDebugMode)print("##### Errorrrr: parent method called intead of child!");
+    if (kDebugMode)
+      print("##### Errorrrr: parent method called intead of child!");
     return false;
   }
 
   Future sendMessage(Message newMessage, User currentUser) async {
-    if (kDebugMode)print("##### Errorrrr: parent method called intead of child!");
+    if (kDebugMode)
+      print("##### Errorrrr: parent method called intead of child!");
     if (!canSendMessage(currentUser)) {
       throw Exception("User can't send message");
     }
@@ -76,7 +80,7 @@ abstract class Chat with ChangeNotifier {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
     } on SocketException catch (message) {
-      if (kDebugMode)print("##### socketException in Chat: $message");
+      if (kDebugMode) print("##### socketException in Chat: $message");
     }
     _messages.add(newMessage);
     notifyListeners();
@@ -84,13 +88,14 @@ abstract class Chat with ChangeNotifier {
 
   Future removeMessage(
       Message message, User currentUser, bool totalRemove) async {
-    if (kDebugMode)print("##### Errorrrr: parent method called intead of child!");
+    if (kDebugMode)
+      print("##### Errorrrr: parent method called intead of child!");
     final http.Response response;
     try {
       response =
           await http.post(Uri.parse("https://test.com"), headers: {}, body: {});
     } on SocketException catch (message) {
-      if (kDebugMode)print(message);
+      if (kDebugMode) print(message);
     }
     if (totalRemove) {
       if (totalRemove) {
@@ -105,7 +110,8 @@ abstract class Chat with ChangeNotifier {
   }
 
   List<String> profiles(User currentUser) {
-    if (kDebugMode)print("##### Errorrrr: parent method called intead of child!");
+    if (kDebugMode)
+      print("##### Errorrrr: parent method called intead of child!");
     return [];
   }
 }

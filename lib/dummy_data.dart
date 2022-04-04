@@ -4,18 +4,16 @@ import 'package:chatapp/Providers/Chat/GroupChat.dart';
 import 'package:chatapp/Providers/Message.dart';
 import 'package:chatapp/Providers/User.dart';
 
-User mahdi =
-    User("tempToken", "p1", "Mahdi", DateTime.now(), false, "", "", []);
-User ali = User("tempToken", "p2", "Ali", DateTime.now(), true, "", "", []);
-User hani = User("tempToken", "p3", "Hani", DateTime.now(), false, "", "", []);
+User mahdi = User("p1", "Mahdi", DateTime.now(), "", "", []);
+User ali = User("p2", "Ali", DateTime.now(), "", "", []);
+User hani = User("p3", "Hani", DateTime.now(), "", "", []);
 Message tempMessage = Message(
   "m1",
   "salaaaaaaaam",
   "p1",
   DateTime.now().subtract(const Duration(hours: 5)),
   false,
-  {
-  },
+  {},
 );
 
 List<Chat> dummy_chats = [
@@ -24,7 +22,6 @@ List<Chat> dummy_chats = [
     [mahdi, ali],
     [tempMessage, tempMessage, tempMessage],
     [],
-    ChatType.user,
     DateTime.now().subtract(const Duration(days: 1)),
   ),
   GroupChat(
@@ -37,7 +34,6 @@ List<Chat> dummy_chats = [
     [],
     [tempMessage, tempMessage, tempMessage],
     [],
-    ChatType.user,
     DateTime.now().subtract(const Duration(days: 1)),
   ),
 ];

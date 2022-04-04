@@ -60,7 +60,8 @@ class ChatScreen extends StatelessWidget {
                             //last seen
                             Text(
                               chat.chatSubtitle(currentUser),
-                              style: Theme.of(context).textTheme.titleSmall,
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 12),
                             )
                           ],
                         ),
@@ -79,9 +80,9 @@ class ChatScreen extends StatelessWidget {
                         ),
                       ),
                       //more button
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
+                      PopupMenuButton(
+                        itemBuilder: (context) => [],
+                        child: Icon(
                           Icons.more_vert,
                           color: Theme.of(context).primaryIconTheme.color,
                         ),

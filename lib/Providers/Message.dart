@@ -1,6 +1,7 @@
 import 'package:chatapp/Providers/User.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class Message with ChangeNotifier {
   String _id;
@@ -38,6 +39,10 @@ class Message with ChangeNotifier {
 
   DateTime? get sendTime {
     return _sendTime;
+  }
+
+  String get sendTimePreview {
+    return DateFormat.Hm().format(_sendTime!);
   }
 
   String get senderId {

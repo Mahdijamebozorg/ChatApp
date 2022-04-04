@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:chatapp/Providers/User.dart';
 
 class Auth with ChangeNotifier {
-  String _userId = "";
   String _token = "";
 
   User? currentUser;
@@ -13,11 +12,9 @@ class Auth with ChangeNotifier {
   //a temp user for testing
   Auth() {
     currentUser = User(
-      token,
-      "p1",
+      "P1",
       "Mahdi",
       DateTime.now(),
-      false,
       "bio",
       "username",
       [],
@@ -29,11 +26,9 @@ class Auth with ChangeNotifier {
     final response = await http.read(Uri(), headers: {});
     final data = json.decode(response);
     currentUser = User(
-      token,
       data["id"],
       data["name"],
       DateTime.now(),
-      false,
       data["bio"],
       data["username"],
       data["profiles"],
@@ -52,7 +47,7 @@ class Auth with ChangeNotifier {
   }
 
   String get userId {
-    return _userId;
+    return currentUser!.id;
   }
 
   String get token {

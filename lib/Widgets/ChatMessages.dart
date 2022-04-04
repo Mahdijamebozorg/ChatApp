@@ -1,5 +1,6 @@
 import 'package:chatapp/Providers/Message.dart';
 import 'package:chatapp/Providers/User.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,16 +10,18 @@ class ChatMessages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode)print("##### State Managing: ChatMessages rebuilt");
+    if (kDebugMode) print("##### State Managing: ChatMessages rebuilt");
     return Consumer<Message>(
       builder: (context, message, child) {
         //seen message by current user
         //await???
         message.seenMessage(currentUser);
         return Align(
+          //alignment
           alignment: currentUser.id == message.senderId
               ? Alignment.topRight
               : Alignment.topLeft,
+          //shape and color
           child: Card(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -39,7 +42,7 @@ class ChatMessages extends StatelessWidget {
                   bottom: 2,
                   child: Text(
                     //test
-                    "22:53",
+                    message.sendTime == null ? "" : message.sendTimePreview,
                     // message.sendTime.hour.toString() ??
                     style: Theme.of(context).textTheme.bodySmall,
                   ),

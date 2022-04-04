@@ -2,21 +2,17 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class User with ChangeNotifier {
-  final String _token;
   final String _id;
   String _name;
   DateTime _lastSeen;
-  bool _isOnline;
   String _username;
   String _bio;
   List<String> _profileUrls;
 
   User(
-    this._token,
     this._id,
     this._name,
     this._lastSeen,
-    this._isOnline,
     this._bio,
     this._username,
     this._profileUrls,
@@ -81,7 +77,4 @@ class User with ChangeNotifier {
     return [..._profileUrls];
   }
 
-  bool get isOnline {
-    return _isOnline;
-  }
 }

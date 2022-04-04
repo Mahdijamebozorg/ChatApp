@@ -14,7 +14,6 @@ class GroupChat extends Chat {
   List<String> _profiles;
   String _chatName;
   final DateTime _createdDate;
-  final ChatType _type;
   final String _id;
 
   List<User> _admins;
@@ -27,7 +26,6 @@ class GroupChat extends Chat {
     this._profiles,
     this._messages,
     this._unsentMessages,
-    this._type,
     this._createdDate,
   ) : super(_id, _users, _messages, _unsentMessages, _createdDate);
 

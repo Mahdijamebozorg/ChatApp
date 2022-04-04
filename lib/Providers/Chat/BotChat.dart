@@ -13,7 +13,6 @@ class BotChat extends Chat {
   List<Message> _unsentMessages;
   List<String> _profiles;
   final DateTime _createdDate;
-  final ChatType _type;
   final String _id;
 
   BotChat(
@@ -22,7 +21,6 @@ class BotChat extends Chat {
     this._profiles,
     this._messages,
     this._unsentMessages,
-    this._type,
     this._createdDate,
   ) : super(_id, _users, _messages, _unsentMessages, _createdDate);
 

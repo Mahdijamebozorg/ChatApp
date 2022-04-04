@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart' as intl;
 
 import './Chat.dart';
 import 'package:chatapp/Providers/Message.dart';
@@ -12,7 +13,6 @@ class PrivateChat extends Chat {
   List<Message> _messages;
   List<Message> _unsentMessages;
   final DateTime _createdDate;
-  final ChatType _type;
   final String _id;
 
   PrivateChat(
@@ -20,13 +20,12 @@ class PrivateChat extends Chat {
     this._users,
     this._messages,
     this._unsentMessages,
-    this._type,
     this._createdDate,
   ) : super(_id, _users, _messages, _unsentMessages, _createdDate);
 
   @override
   Future sendMessage(Message newMessage, User currentUser) async {
-    if (kDebugMode)print("##### PrivateChat: sendMessage called");
+    if (kDebugMode) print("##### PrivateChat: sendMessage called");
     if (!canSendMessage(currentUser)) {
       throw Exception("User can't send message");
     }
@@ -53,7 +52,7 @@ class PrivateChat extends Chat {
       _unsentMessages.removeWhere((message) => message.id == newMessage.id);
       _messages.add(newMessage);
     } on SocketException catch (message) {
-      if (kDebugMode)print("##### socketException in sendMessage: $message");
+      if (kDebugMode) print("##### socketException in sendMessage: $message");
     }
     notifyListeners();
   }
@@ -61,7 +60,7 @@ class PrivateChat extends Chat {
   //test
   // @override
   Future uploadMessages() async {
-    if (kDebugMode)print("##### Chat: uploadMessage called");
+    if (kDebugMode) print("##### Chat: uploadMessage called");
 
     //upload all unsentMessages
     for (var message in _unsentMessages) {
@@ -75,7 +74,9 @@ class PrivateChat extends Chat {
         _unsentMessages.remove(message);
         notifyListeners();
       } on SocketException catch (message) {
-        if (kDebugMode)print("##### socketException in uploadMessage: $message");
+        if (kDebugMode) {
+          print("##### socketException in uploadMessage: $message");
+        }
       }
     }
   }
@@ -91,7 +92,7 @@ class PrivateChat extends Chat {
         body: {},
       );
     } on SocketException catch (message) {
-      if (kDebugMode)print("##### socketException in removeMessage: $message");
+      if (kDebugMode) print("##### socketException in removeMessage: $message");
     }
     if (totalRemove) {
       _messages.remove(message);
@@ -103,15 +104,29 @@ class PrivateChat extends Chat {
 
   @override
   String chatTitle(User currentUser) {
+    if (_users.isEmpty) return "no user found!";
     return _users.firstWhere((user) => currentUser.id != user.id).name;
   }
 
   @override
   String chatSubtitle(User currentUser) {
-    return _users
-        .firstWhere((user) => user.id == currentUser.id)
-        .lastSeen
-        .toString();
+    if (_users.isEmpty) return "no user found!";
+
+    //calcualte today
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime lastSeen =
+        _users.firstWhere((user) => user.id == currentUser.id).lastSeen;
+    //if is not today
+    if (lastSeen.isBefore(today)) {
+      return intl.DateFormat.yMEd().format(lastSeen) +
+          " at " +
+          intl.DateFormat.Hm().format(lastSeen);
+    }
+    //if is today
+    else {
+      return intl.DateFormat.Hm().format(lastSeen);
+    }
   }
 
   @override
@@ -122,6 +137,7 @@ class PrivateChat extends Chat {
 
   @override
   List<String> profiles(User currentUser) {
+    if (_users.isEmpty) return ["assets/images/user.png"];
     return _users.firstWhere((user) => user.id == currentUser.id).profileUrls;
   }
 }
