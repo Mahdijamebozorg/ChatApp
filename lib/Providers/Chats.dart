@@ -9,7 +9,6 @@ import 'package:chatapp/Providers/Chat/PrivateChat.dart';
 import 'package:chatapp/Providers/Chat/GroupChat.dart';
 import 'package:chatapp/Providers/Chat/ChannelChat.dart';
 import 'package:chatapp/Providers/Chat/BotChat.dart';
-import 'package:http/retry.dart';
 
 class Chats with ChangeNotifier {
   final String _token;
@@ -73,26 +72,30 @@ class Chats with ChangeNotifier {
   }
 
   ///loading chat from server
-  Future loadChats(/*Authentication data*/) async {
+  Future loadChats(
+    Function done,
+    /*Authentication data*/
+  ) async {
     //initial fireBase
     if (!kIsWeb && Firebase.apps.isEmpty) {
       await Firebase.initializeApp().then((value) {
         if (kDebugMode) {
-          print("##### App initialized in loadChats: ${value.name}");
+          print("***** App initialized in loadChats: ${value.name}");
         }
       });
     }
-    if (kDebugMode) print("##### loading chats...");
+    if (kDebugMode) print("***** loading chats...");
 
-    final data = FirebaseFirestore.instance.collection("PrivateChats");
+    final userPrivateChats = FirebaseFirestore.instance
+        .collection("PrivateChats")
+        .orderBy("createdDate")
+        .where("users.$_userId", isEqualTo: true);
 
     //load user privateChats and listen to them
-    data
-        .where("users.$_userId", isEqualTo: true)
-        .snapshots()
-        .listen((privateChats) async {
+    await for (QuerySnapshot<Map<String, dynamic>> privateChats
+        in userPrivateChats.snapshots()) {
+      if (kDebugMode) print("***** privateChat listen called");
       for (var privateChat in privateChats.docs) {
-        if (kDebugMode) print("##### privateChat: ${privateChat.data()}");
         //load messages from local dataBase
         List<Message> unsentMessages = []; //= dbHelper.fetchData(table)...
 
@@ -102,7 +105,6 @@ class Chats with ChangeNotifier {
                 .orderBy("sendTime")
                 .get())
             .docs;
-
         //users in chat
         final List<User> users = await loadUsersInChat(privateChat);
 
@@ -114,7 +116,6 @@ class Chats with ChangeNotifier {
           users,
           //messages
           messages.map((message) {
-            if (kDebugMode) print("##### message: ${message.data()}");
             return Message(
               message.id,
               message.data()["text"],
@@ -131,9 +132,10 @@ class Chats with ChangeNotifier {
           //created date
           privateChat.data()["createdDate"].toDate(),
         ));
+        notifyListeners();
+        done(true);
       }
-      notifyListeners();
-    });
+    }
 
     //access fireStore and get chats which user is in them and listen to them
     // FirebaseFirestore.instance

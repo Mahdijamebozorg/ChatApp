@@ -104,13 +104,13 @@ class PrivateChat extends Chat {
 
   @override
   String chatTitle(User currentUser) {
-    if (_users.isEmpty) return "no user found!";
+    if (_users.isEmpty || _users.length == 1) return "no user found!";
     return _users.firstWhere((user) => currentUser.id != user.id).name;
   }
 
   @override
   String chatSubtitle(User currentUser) {
-    if (_users.isEmpty) return "no user found!";
+    if (_users.isEmpty || _users.length == 1) return "no user found!";
 
     //calcualte today
     final now = DateTime.now();

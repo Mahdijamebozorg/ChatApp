@@ -38,10 +38,12 @@ class ChatScreen extends StatelessWidget {
                       Container(
                         height: 50,
                         margin: const EdgeInsets.only(left: 50),
-                        child: const CircleAvatar(
-                          backgroundImage: AssetImage(
-                            "assets/images/user.png",
-                          ), //test
+                        child: CircleAvatar(
+                          backgroundImage: chat.profiles(currentUser).isEmpty
+                              ? const AssetImage("assets/images/user.png")
+                              : NetworkImage(
+                                  chat.profiles(currentUser)[0],
+                                ) as ImageProvider,
                         ),
                       ),
                       //datails

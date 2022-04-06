@@ -63,7 +63,11 @@ class ChatItem extends StatelessWidget {
         ),
 
         //last message
-        subtitle: Text(removeWhiteSpaces(chat.messages.last.text),
+        subtitle: Text(
+            chat.messages.isEmpty
+                //draft message
+                ? ""
+                : removeWhiteSpaces(chat.messages.last.text),
             style: Theme.of(context).textTheme.bodySmall),
 
         //profile phot
