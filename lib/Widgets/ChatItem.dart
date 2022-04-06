@@ -1,3 +1,4 @@
+import 'package:chatapp/Helpers/TransitionHelper.dart';
 import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
@@ -18,7 +19,7 @@ class ChatItem extends StatelessWidget {
   ///select a chat and provide chat data for it
   void selectChat(BuildContext context, Chat chat) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      SlideTransitionRoute(
         builder: (context) => ChangeNotifierProvider<Chat>.value(
           value: chat,
           child: ChatScreen(),
