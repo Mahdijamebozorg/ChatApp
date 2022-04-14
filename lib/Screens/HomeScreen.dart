@@ -14,11 +14,7 @@ import 'package:chatapp/Widgets/ChatItem.dart';
 
 ///App home screen
 class HomeScreen extends StatefulWidget {
-  final bool isConnecting;
-  final String backEndAddress;
   const HomeScreen({
-    required this.isConnecting,
-    required this.backEndAddress,
     Key? key,
   }) : super(key: key);
 
@@ -51,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //check connection to server
         final http.Response response;
         try {
-          response = await http.get(Uri.parse(widget.backEndAddress),
+          response = await http.get(Uri.parse("http://firebase.google.com"),
               headers: {"token": auth.token});
 
           if (kDebugMode) print("##### status code: ${response.statusCode}");

@@ -18,8 +18,7 @@ class ChatScreen extends StatelessWidget {
     if (kDebugMode) print("##### State Managing:  ChatScreen Rebuilt");
 
     //providers data
-    final User currentUser =
-        Provider.of<Auth>(context, listen: false).currentUser!;
+    final User currentUser = Provider.of<User>(context, listen: false);
 
     return Consumer<Chat>(
       builder: (context, chat, child) => Scaffold(

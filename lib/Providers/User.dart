@@ -76,5 +76,4 @@ class User with ChangeNotifier {
   List<String> get profileUrls {
     return [..._profileUrls];
   }
-
 }

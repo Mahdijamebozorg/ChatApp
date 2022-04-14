@@ -11,10 +11,9 @@ import 'package:chatapp/Providers/Chat/ChannelChat.dart';
 import 'package:chatapp/Providers/Chat/BotChat.dart';
 
 class Chats with ChangeNotifier {
-  final String _token;
   final String _userId;
   final List<Chat> _chats;
-  Chats(this._token, this._userId, this._chats);
+  Chats(this._userId, this._chats);
 
   List<Chat> get allChats {
     return [..._chats];
@@ -94,7 +93,6 @@ class Chats with ChangeNotifier {
     //load user privateChats and listen to them
     await for (QuerySnapshot<Map<String, dynamic>> privateChats
         in userPrivateChats.snapshots()) {
-      if (kDebugMode) print("***** privateChat listen called");
       for (var privateChat in privateChats.docs) {
         //load messages from local dataBase
         List<Message> unsentMessages = []; //= dbHelper.fetchData(table)...
@@ -136,7 +134,6 @@ class Chats with ChangeNotifier {
         done(true);
       }
     }
-
     //access fireStore and get chats which user is in them and listen to them
     // FirebaseFirestore.instance
     //     .collection("Chats")
