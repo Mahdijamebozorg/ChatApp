@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
-import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Widgets/AppDrawer.dart';
 import 'package:chatapp/Widgets/ChatItem.dart';
@@ -26,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _connectivityState = "Waiting...";
 
   ///checking connection state
-  Future checkConnectionState(User user, Auth auth) async {
+  Future checkConnectionState() async {
     //listen to device internet changes
     await for (ConnectivityResult result
         in Connectivity().onConnectivityChanged) {
@@ -47,8 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //check connection to server
         final http.Response response;
         try {
-          response = await http.get(Uri.parse("http://firebase.google.com"),
-              headers: {"token": auth.token});
+          response = await http.get(Uri.parse("http://firebase.google.com"));
 
           if (kDebugMode) print("##### status code: ${response.statusCode}");
 
@@ -92,12 +90,6 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {});
       }
     }
-
-    //this syntax was wrong
-    // Connectivity().onConnectivityChanged.listen(
-    //   (ConnectivityResult result) async {
-    //   },
-    // );
   }
 
   @override
@@ -107,20 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
     ///current user
     final user = Provider.of<User>(context, listen: false);
 
-    ///user auth
-    final auth = Provider.of<Auth>(context, listen: false);
-
     final Size _screenSize = MediaQuery.of(context).size;
 
+    //check connection state and start listening to chats
     return FutureBuilder(
-        future: checkConnectionState(user, auth),
+        future: checkConnectionState(),
         builder: (context, snapShot) {
-          // checkConnectionState(user, auth);
           //update chat lists on updates
           return Consumer<Chats>(builder: (context, chats, ch) {
-            if (kDebugMode) {
-              print("***** State Managing:  ChatsItems Rebuilt");
-            }
+            if (kDebugMode) print("***** State Managing:  ChatsItems Rebuilt");
+
+            //tabs controler
             return DefaultTabController(
               initialIndex: 1,
               length: 2,

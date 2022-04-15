@@ -1,10 +1,12 @@
+import 'package:chatapp/Providers/Chats.dart';
+import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Theme/UserThemeData.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:chatapp/Providers/Auth.dart';
-import 'package:chatapp/Providers/Chats.dart';
-import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/AuthenticatinScreen.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
 import 'package:chatapp/Screens/HomeScreen.dart';
@@ -18,67 +20,65 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //these providers are used in entire app so we used them here
-    return MultiProvider(
-      providers: [
-        //Auth provider
-        ChangeNotifierProvider<Auth>(
-          create: (ctx) => Auth(),
-        ),
+    return MaterialApp(
+      title: 'Chat App',
+      debugShowCheckedModeBanner: false,
 
-        //User
-        ChangeNotifierProxyProvider<Auth, User?>(
-          create: (_) => User("", "", DateTime.now(), "", "", []),
-          update: (_, auth, user) => auth.currentUser == null ? null : user,
-        ),
+      //Theme
+      theme: UserThemeData(context).themeData,
 
-        //Chats provider
-        ChangeNotifierProxyProvider<User?, Chats?>(
-          create: (_) => Chats("", []),
-          update: (_, user, chats) => user == null
-              ? null
-              : Chats(
-                  user.id,
-                  chats == null ? [] : chats.allChats,
-                ),
-        ),
-      ],
+      //Routes
+      routes: {
+        //authentication...
+        "/": (_) => StreamBuilder(
+            //wait to auto login if possible
+            stream: firebase_auth.FirebaseAuth.instance.authStateChanges(),
+            builder: (_, AsyncSnapshot<firebase_auth.User?> userData) {
+              if (kDebugMode && userData.hasData) {
+                // ignore: avoid_print
+                print(
+                    "data: ${userData.data!}, providerData: ${userData.data!.providerData}}");
+              }
+              //if auth failed
+              if (!userData.hasData) {
+                return const AuthenticationScreen();
+              }
 
-      //all widget are based on auth data and update with its changes
-      child: Consumer<Auth>(
-        builder: (context, auth, ch) => MaterialApp(
-          title: 'Chat App',
-          debugShowCheckedModeBanner: false,
+              //if auth done
+              else {
+                //load userdata from server
+                return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                    stream: FirebaseFirestore.instance
+                        .collection("Users")
+                        .doc(userData.data!.uid)
+                        .snapshots(),
+                    builder: (_, userSnapshot) {
+                      return !userSnapshot.hasData
+                          //waiting
+                          ? const CircularProgressIndicator()
 
-          //Theme
-          theme: UserThemeData(context).themeData,
+                          //set data providers
+                          : MultiProvider(
+                              providers: [
+                                //user data provider
+                                ChangeNotifierProvider<User>(
+                                  create: (_) =>
+                                      User.loadFromDocument(userSnapshot.data!),
+                                ),
 
-          //Routes
-          routes: {
-            "/": (_) => auth.isAuth()
-                //User is Auth
-                ? const HomeScreen()
-
-                //Not
-                : FutureBuilder(
-                    //wait to auto login if possible
-                    future: auth.tryAutoLogin(),
-                    builder: (_, AsyncSnapshot<bool> snapShot) =>
-                        snapShot.connectionState == ConnectionState.waiting
-                            //waiting...
-                            ? const CircularProgressIndicator()
-                            //done
-                            : snapShot.data!
-                                //auto login done
-                                ? const HomeScreen()
-                                //auto n failed
-                                : const AuthenticationScreen(),
-                  ),
-            ChatScreen.routeName: (_) => ChatScreen(),
-            AuthenticationScreen.routeName: (_) => const AuthenticationScreen(),
-          },
-        ),
-      ),
+                                //chats data provider
+                                ChangeNotifierProvider<Chats>(
+                                  create: (_) => Chats(userData.data!.uid),
+                                ),
+                              ],
+                              child: const HomeScreen(),
+                            );
+                    });
+              }
+            }),
+        ChatScreen.routeName: (_) => ChatScreen(),
+        AuthenticationScreen.routeName: (_) => const AuthenticationScreen(),
+      },
     );
   }
 }

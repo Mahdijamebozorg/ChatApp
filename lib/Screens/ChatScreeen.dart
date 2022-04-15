@@ -1,4 +1,3 @@
-import 'package:chatapp/Providers/Auth.dart';
 import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Widgets/ChatInput.dart';
@@ -10,7 +9,7 @@ import 'package:provider/provider.dart';
 const double inputFieldHeight = 45;
 
 class ChatScreen extends StatelessWidget {
-  ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({Key? key}) : super(key: key);
   static const routeName = "/chatScreen";
 
   @override

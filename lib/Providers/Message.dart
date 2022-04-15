@@ -1,4 +1,5 @@
 import 'package:chatapp/Providers/User.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -28,6 +29,20 @@ class Message with ChangeNotifier {
     this._isEdited,
     this._usersSeen,
   );
+
+  static Message loadFromDocument(
+      DocumentSnapshot<Map<String, dynamic>> messageDocument) {
+    return Message(
+      messageDocument.id,
+      messageDocument.data()!["text"],
+      messageDocument.data()!["senderId"],
+      (messageDocument.data()!["sendTime"] as Timestamp).toDate(),
+      messageDocument.data()!["isEdited"],
+      Map<String, DateTime>.from(messageDocument
+          .data()!["usersSeen"]
+          .map((key, value) => MapEntry(key, value.toDate()))),
+    );
+  }
 
   String get id {
     return _id;

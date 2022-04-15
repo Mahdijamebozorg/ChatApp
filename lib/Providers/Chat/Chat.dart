@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -43,6 +44,27 @@ abstract class Chat with ChangeNotifier {
     return _id;
   }
 
+  ///takes a chat document and returns list of users
+  static Future<List<User>> loadUsersInChat(
+      DocumentSnapshot<Map<String, dynamic>> chat,
+      {String token = ""}) async {
+    //users in chat
+    List<User> users = [];
+    for (String id in chat.data()!["users"].keys) {
+      final user =
+          await FirebaseFirestore.instance.collection("Users").doc(id).get();
+
+      if (user.data() != null) users.add(User.loadFromDocument(user));
+    }
+    return users;
+  }
+
+  Future loadMessages() async {
+    if (kDebugMode) {
+      print("##### Errorrrr: parent method called intead of child!");
+    }
+  }
+
   //testing
   String idGearator() {
     return (Random().nextInt(1000)).toString();
@@ -50,28 +72,32 @@ abstract class Chat with ChangeNotifier {
 
   ///name of person or group
   String chatTitle(User currentUser) {
-    if (kDebugMode)
+    if (kDebugMode) {
       print("##### Errorrrr: parent method called intead of child!");
+    }
     return "Title";
   }
 
   ///last seen of person or members count
   String chatSubtitle(User currentUser) {
-    if (kDebugMode)
+    if (kDebugMode) {
       print("##### Errorrrr: parent method called intead of child!");
+    }
     return "Subtitle";
   }
 
   ///if user can send message to this chat
   bool canSendMessage(User user) {
-    if (kDebugMode)
+    if (kDebugMode) {
       print("##### Errorrrr: parent method called intead of child!");
+    }
     return false;
   }
 
   Future sendMessage(Message newMessage, User currentUser) async {
-    if (kDebugMode)
+    if (kDebugMode) {
       print("##### Errorrrr: parent method called intead of child!");
+    }
     if (!canSendMessage(currentUser)) {
       throw Exception("User can't send message");
     }
@@ -88,8 +114,9 @@ abstract class Chat with ChangeNotifier {
 
   Future removeMessage(
       Message message, User currentUser, bool totalRemove) async {
-    if (kDebugMode)
+    if (kDebugMode) {
       print("##### Errorrrr: parent method called intead of child!");
+    }
     final http.Response response;
     try {
       response =
@@ -110,8 +137,9 @@ abstract class Chat with ChangeNotifier {
   }
 
   List<String> profiles(User currentUser) {
-    if (kDebugMode)
+    if (kDebugMode) {
       print("##### Errorrrr: parent method called intead of child!");
+    }
     return [];
   }
 }

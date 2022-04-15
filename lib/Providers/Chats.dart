@@ -1,5 +1,4 @@
 import 'package:chatapp/Providers/Message.dart';
-import 'package:chatapp/Providers/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -12,8 +11,9 @@ import 'package:chatapp/Providers/Chat/BotChat.dart';
 
 class Chats with ChangeNotifier {
   final String _userId;
-  final List<Chat> _chats;
-  Chats(this._userId, this._chats);
+  Chats(this._userId);
+
+  List<Chat> _chats = [];
 
   List<Chat> get allChats {
     return [..._chats];
@@ -48,27 +48,9 @@ class Chats with ChangeNotifier {
     _chats.remove(chat);
   }
 
-  Future<List<User>> loadUsersInChat(
-      QueryDocumentSnapshot<Map<String, dynamic>> chat,
-      {String token = ""}) async {
-    //users in chat
-    List<User> users = [];
-    for (String id in chat.data()["users"].keys) {
-      final user =
-          await FirebaseFirestore.instance.collection("Users").doc(id).get();
-      if (user.data() != null) {
-        users.add(User(
-          user.id,
-          user.data()!["name"],
-          user.data()!["lastSeen"].toDate(),
-          user.data()!["bio"],
-          user.data()!["username"],
-          Map<String, String>.from(user.data()!["profileUrls"]).values.toList(),
-        ));
-      }
-    }
-    return users;
-  }
+  Future updateChat(Chat chat) async {}
+
+//------------------------------------------------------------------------------------------------------------
 
   ///loading chat from server
   Future loadChats(
@@ -76,128 +58,84 @@ class Chats with ChangeNotifier {
     /*Authentication data*/
   ) async {
     //initial fireBase
-    if (!kIsWeb && Firebase.apps.isEmpty) {
+    if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp().then((value) {
         if (kDebugMode) {
           print("***** App initialized in loadChats: ${value.name}");
         }
       });
     }
-    if (kDebugMode) print("***** loading chats...");
 
-    final userPrivateChats = FirebaseFirestore.instance
+    await loadPrivateChats();
+    // listenToPrivateChats();
+  }
+
+//------------------------------------------------------------------------------------------------------------
+
+  ///loads private chats
+  ///
+  ///Future Feature:
+  ///* offline mode
+  Future loadPrivateChats() async {
+    if (kDebugMode) print("***** loading privateChats...");
+
+    final userPrivateChatsCollection = await FirebaseFirestore.instance
+        .collection("PrivateChats")
+        .orderBy("createdDate")
+        .where("users.$_userId", isEqualTo: true)
+        .get();
+
+    for (var chatDoc in userPrivateChatsCollection.docs) {
+      final PrivateChat chat = await PrivateChat.loadFromDocument(chatDoc);
+      if (!_chats.contains(chat)) {
+        _chats.add(chat);
+      }
+    }
+  }
+
+  //------------------------------------------------------------------------------------------------------------
+
+  ///updates changed chats from server
+  ///
+  ///Future Feature:
+  ///* handle unsent messages
+  Stream listenToPrivateChats() async* {
+    final userPrivateChatsCollection = FirebaseFirestore.instance
         .collection("PrivateChats")
         .orderBy("createdDate")
         .where("users.$_userId", isEqualTo: true);
 
     //load user privateChats and listen to them
     await for (QuerySnapshot<Map<String, dynamic>> privateChats
-        in userPrivateChats.snapshots()) {
-      for (var privateChat in privateChats.docs) {
+        in userPrivateChatsCollection.snapshots()) {
+      //look for changes
+      for (var docChanges in privateChats.docChanges) {
         //load messages from local dataBase
         List<Message> unsentMessages = []; //= dbHelper.fetchData(table)...
 
-        //messages collection
-        final messages = (await privateChat.reference
-                .collection("Messages")
-                .orderBy("sendTime")
-                .get())
-            .docs;
-        //users in chat
-        final List<User> users = await loadUsersInChat(privateChat);
+        final changedChat = await PrivateChat.loadFromDocument(docChanges.doc);
 
-        _chats.clear();
-        //inserting chats
-        _chats.add(PrivateChat(
-          privateChat.id,
-          //users
-          users,
-          //messages
-          messages.map((message) {
-            return Message(
-              message.id,
-              message.data()["text"],
-              message.data()["senderId"],
-              (message.data()["sendTime"] as Timestamp).toDate(),
-              message.data()["isEdited"],
-              Map<String, DateTime>.from(message
-                  .data()["usersSeen"]
-                  .map((key, value) => MapEntry(key, value.toDate()))),
-            );
-          }).toList(),
-          //local messages
-          unsentMessages,
-          //created date
-          privateChat.data()["createdDate"].toDate(),
-        ));
+        //if chat is already loaded
+        if (_chats.contains(changedChat)) {
+          //if chat removed from database
+          if (!docChanges.doc.exists) {
+            _chats.removeWhere((c) => c.id == changedChat.id);
+          }
+          //if chat updated from database
+          else {
+            final index = _chats.lastIndexWhere((c) => c.id == changedChat.id);
+            _chats[index] = changedChat;
+          }
+        }
+        //if chat added to database
+        else {
+          _chats.add(changedChat);
+        }
+
         notifyListeners();
-        done(true);
       }
     }
-    //access fireStore and get chats which user is in them and listen to them
-    // FirebaseFirestore.instance
-    //     .collection("Chats")
-    //     .where("Users.$_userId", isEqualTo: true)
-    //     .snapshots()
-    //     .listen((userChats) {
-    //   //categorize chats and add them
-    //   if (kDebugMode) print("##### ${userChats.docs}");
-
-    //   for (var chat in userChats.docs) {
-    //     if (kDebugMode) print("##### ${chat.data()}");
-    // if (chat["Type"] == private) {
-    //   _chats.add(PrivateChat(
-    //     chat.id,
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()["createdDate"],
-    //   ));
-    // } else if (chat["Type"] == group) {
-    //   _chats.add(GroupChat(
-    //     chat.id,
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //   ));
-    // } else if (chat["Type"] == channel) {
-    //   _chats.add(GroupChat(
-    //     chat.id,
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //   ));
-    // } else if (chat["Type"] == bot) {
-    //   _chats.add(GroupChat(
-    //     chat.id,
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //     chat.data()[""],
-    //   ));
-    // }
-    // notifyListeners();
-    //   }
-    // });
   }
 
-  ///updating chat from server
-  Future updateChat(Chat chat /*Authentication data*/) async {
-    //send data to server
-  }
+  //------------------------------------------------------------------------------------------------------------
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,6 +18,20 @@ class User with ChangeNotifier {
     this._username,
     this._profileUrls,
   );
+
+  static User loadFromDocument(
+      DocumentSnapshot<Map<String, dynamic>> userDocument) {
+    return User(
+      userDocument.id,
+      userDocument.data()!["name"],
+      userDocument.data()!["lastSeen"].toDate(),
+      userDocument.data()!["bio"],
+      userDocument.data()!["username"],
+      Map<String, String>.from(userDocument.data()!["profileUrls"])
+          .values
+          .toList(),
+    );
+  }
 
   ///change user name
   Future changeName(String newName) async {

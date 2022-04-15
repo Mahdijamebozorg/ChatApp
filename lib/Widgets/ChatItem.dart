@@ -2,6 +2,7 @@ import 'package:chatapp/Helpers/TransitionHelper.dart';
 import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,7 @@ class ChatItem extends StatelessWidget {
       SlideTransitionRoute(
         builder: (context) => ChangeNotifierProvider<Chat>.value(
           value: chat,
-          child: ChatScreen(),
+          child: const ChatScreen(),
         ),
       ),
     );
@@ -48,38 +49,42 @@ class ChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Chat>(
-      builder: (context, chat, ch) => ListTile(
-        hoverColor: Colors.white.withOpacity(0.1),
-        //open chat
-        onTap: () => selectChat(context, chat),
+    return FutureBuilder(
+        future: Provider.of<Chat>(context).loadMessages(),
+        builder: (context, snapshot) {
+          return Consumer<Chat>(
+            builder: (context, chat, ch) => ListTile(
+              hoverColor: Colors.white.withOpacity(0.1),
+              //open chat
+              onTap: () => selectChat(context, chat),
 
-        //options
-        onLongPress: () {},
+              //options
+              onLongPress: () {},
 
-        //user name
-        title: Text(
-          removeWhiteSpaces(chat.chatTitle(currentUser)),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+              //user name
+              title: Text(
+                removeWhiteSpaces(chat.chatTitle(currentUser)),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
 
-        //last message
-        subtitle: Text(
-            chat.messages.isEmpty
-                //draft message
-                ? ""
-                : removeWhiteSpaces(chat.messages.last.text),
-            style: Theme.of(context).textTheme.bodySmall),
+              //last message
+              subtitle: Text(
+                  chat.messages.isEmpty
+                      //draft message
+                      ? ""
+                      : removeWhiteSpaces(chat.messages.last.text),
+                  style: Theme.of(context).textTheme.bodySmall),
 
-        //profile phot
-        leading: CircleAvatar(
-          backgroundImage: chat.profiles(currentUser).isEmpty
-              ? const AssetImage("assets/images/user.png")
-              : NetworkImage(
-                  chat.profiles(currentUser)[0],
-                ) as ImageProvider,
-        ),
-      ),
-    );
+              //profile phot
+              leading: CircleAvatar(
+                backgroundImage: chat.profiles(currentUser).isEmpty
+                    ? const AssetImage("assets/images/user.png")
+                    : NetworkImage(
+                        chat.profiles(currentUser)[0],
+                      ) as ImageProvider,
+              ),
+            ),
+          );
+        });
   }
 }
