@@ -1,4 +1,5 @@
 import 'package:chatapp/Providers/Chat/Chat.dart';
+import 'package:chatapp/Providers/Message.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Widgets/ChatInput.dart';
 import 'package:chatapp/Widgets/ChatMessages.dart';
@@ -107,10 +108,26 @@ class ChatScreen extends StatelessWidget {
                       itemCount: chat.messages.length,
                       padding: const EdgeInsets.only(top: 10, bottom: 10),
                       itemBuilder: (context, index) =>
-                          ChangeNotifierProvider.value(
+                          ChangeNotifierProvider<Message>.value(
                         value: chat.messages[index],
-                        child: ChatMessages(
-                          currentUser: currentUser,
+                        child: Align(
+                          //alignment
+                          alignment:
+                              currentUser.id == chat.messages[index].senderId
+                                  ? Alignment.topRight
+                                  : Alignment.topLeft,
+                          //shape and color
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            color:
+                                (chat.messages[index].senderId == currentUser.id
+                                    ? Colors.blue[700]
+                                    : Colors.grey.shade700),
+                            child: ChatMessages(
+                              currentUser: currentUser,
+                            ),
+                          ),
                         ),
                       ),
                     ),

@@ -1,9 +1,11 @@
-import 'package:chatapp/Widgets/AuthForm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:chatapp/Widgets/AuthForm.dart';
+import 'package:chatapp/Models/ConnectivityState.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   static const routeName = "/AuthenticationScreen";
@@ -14,6 +16,8 @@ class AuthenticationScreen extends StatefulWidget {
 }
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
+  ConnectivityState _connectivityState = ConnectivityState.waiting;
+
   Future<bool> _submitAuthForm(
     String email,
     String name,
@@ -21,16 +25,19 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     bool isLogin,
     BuildContext context,
   ) async {
-    UserCredential res;
+    firebaseAuth.UserCredential res;
 
     try {
       if (isLogin) {
-        res = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        res =
+            await firebaseAuth.FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
+        FirebaseFirestore.instance.collection("User").doc(res.user!.uid);
       } else {
-        res = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        res = await firebaseAuth.FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
@@ -45,6 +52,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           "bio": "",
           "lastSeen": Timestamp.fromDate(DateTime.now()),
           "profileUrls": {},
+        }).then((value) {
+          if (kDebugMode) print("***** Data created for ${res.user!.uid}");
         });
       }
       return true;
@@ -55,6 +64,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           e.message == null ? "Authentication failed!" : e.message!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: const Duration(seconds: 5),
           backgroundColor: Theme.of(context).errorColor,
           content: Text(errorMessage),
         ),
@@ -63,7 +73,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
     }
     //other exceptions
     catch (e) {
-      if (kDebugMode) print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 5),
+          backgroundColor: Theme.of(context).errorColor,
+          content: Text(e.toString()),
+        ),
+      );
       return false;
     }
   }
@@ -74,7 +90,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       ///Future Features:
       ///*connection status will be added
       appBar: AppBar(
-        title: Text("Status"),
+        title: Text(getConnectivityState(_connectivityState)),
       ),
       body: AuthForm(_submitAuthForm),
     );

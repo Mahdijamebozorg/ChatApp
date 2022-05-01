@@ -26,40 +26,42 @@ class PrivateChat extends Chat {
 
   @override
   Future loadMessages() async {
-    final messagesCollection = FirebaseFirestore.instance
-        .collection("PrivateChats/$id/Messages")
-        .orderBy("sendDate");
+    // final messagesCollection =
+    //     FirebaseFirestore.instance.collection("PrivateChats/$id/Messages")
+    //     // .orderBy("sendTime")
+    //     ;
 
-    //listen for changed messages in Messages collection
-    await for (QuerySnapshot<Map<String, dynamic>> chats
-        in messagesCollection.snapshots()) {
-      for (var changes in chats.docChanges) {
-        Message changedMessage = Message.loadFromDocument(changes.doc);
+    // //listen for changed messages in Messages collection
+    // await for (QuerySnapshot<Map<String, dynamic>> chats
+    //     in messagesCollection.snapshots()) {
+    //   for (var changes in chats.docChanges) {
+    //     Message changedMessage = Message.loadFromDocument(changes.doc);
 
-        //if message exists in app
-        if (_messages.contains(changedMessage)) {
-          //if removed from database
-          if (!changes.doc.exists) {
-            _messages.removeWhere((m) => m.id == changedMessage.id);
-          }
+    //     //if message exists in app
+    //     if (hasMessage(changedMessage.id)) {
+    //       //if removed from database
+    //       if (!changes.doc.exists) {
+    //         _messages.removeWhere((m) => m.id == changedMessage.id);
+    //       }
 
-          //if updated in database
-          else {
-            final index =
-                _messages.indexWhere((m) => changedMessage.id == m.id);
-            _messages[index] = changedMessage;
-          }
-        }
-        //if added to database
-        else {
-          _messages.add(changedMessage);
-        }
-        notifyListeners();
-      }
-    }
+    //       //if updated in database
+    //       else {
+    //         final index =
+    //             _messages.indexWhere((m) => changedMessage.id == m.id);
+    //         _messages[index] = changedMessage;
+    //       }
+    //     }
+    //     //if added to database
+    //     else {
+    //       _messages.add(changedMessage);
+    //     }
+    //     notifyListeners();
+    //   }
+    // }
   }
 
   ///takes a PrivateChat doc and makes a PrivateChat instance
+  ///
   ///Future Feature:
   ///* load unsent messages froms local database
   static Future<PrivateChat> loadFromDocument(
@@ -69,7 +71,9 @@ class PrivateChat extends Chat {
 
     //messages
     final messages =
-        (await doc.reference.collection("Messages").orderBy("sendTime").get())
+        (await doc.reference.collection("Messages")
+        .orderBy("sendTime")
+        .get())
             .docs
             .map((message) {
       return Message.loadFromDocument(message);
@@ -116,7 +120,7 @@ class PrivateChat extends Chat {
           .add({
         "text": newMessage.text,
         "senderId": currentUser.id,
-        "sendDate": Timestamp.fromDate(DateTime.now()),
+        "sendTime": Timestamp.fromDate(DateTime.now()),
         "isEdited": false,
         "usersSeen": {},
       });
@@ -210,7 +214,9 @@ class PrivateChat extends Chat {
 
   @override
   List<String> profiles(User currentUser) {
-    if (_users.isEmpty) return ["assets/images/user.png"];
+    if (_users.isEmpty) {
+      return ["assets/images/user.png"];
+    } 
     return _users.firstWhere((user) => user.id == currentUser.id).profileUrls;
   }
 }

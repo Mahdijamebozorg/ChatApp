@@ -2,7 +2,6 @@ import 'package:chatapp/Helpers/TransitionHelper.dart';
 import 'package:chatapp/Providers/Chat/Chat.dart';
 import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Screens/ChatScreeen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,11 +17,18 @@ class ChatItem extends StatelessWidget {
   }) : super(key: key);
 
   ///select a chat and provide chat data for it
-  void selectChat(BuildContext context, Chat chat) {
+  void selectChat(BuildContext context, Chat chat, User user) {
     Navigator.of(context).push(
       SlideTransitionRoute(
-        builder: (context) => ChangeNotifierProvider<Chat>.value(
-          value: chat,
+        builder: (context) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider<Chat>.value(
+              value: chat,
+            ),
+            ChangeNotifierProvider<User>.value(
+              value: user,
+            ),
+          ],
           child: const ChatScreen(),
         ),
       ),
@@ -49,14 +55,15 @@ class ChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<User>(context, listen: false);
     return FutureBuilder(
-        future: Provider.of<Chat>(context).loadMessages(),
+        future: Provider.of<Chat>(context, listen: false).loadMessages(),
         builder: (context, snapshot) {
           return Consumer<Chat>(
             builder: (context, chat, ch) => ListTile(
               hoverColor: Colors.white.withOpacity(0.1),
               //open chat
-              onTap: () => selectChat(context, chat),
+              onTap: () => selectChat(context, chat, user),
 
               //options
               onLongPress: () {},

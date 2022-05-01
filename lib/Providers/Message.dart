@@ -72,21 +72,40 @@ class Message with ChangeNotifier {
     return {..._usersSeen};
   }
 
-  Future editMessage(String messageText) async {
-    final response = await http.get(Uri.parse("https://text.com"));
+  Future editMessage(String messageText, String chatId) async {
+    await FirebaseFirestore.instance
+        .collection("PrivateChats/$chatId/Messages")
+        .doc(id)
+        .update({
+      "text": messageText,
+      "senderId": senderId,
+      "sendTime": sendTime,
+      "isEdited": true,
+      "usersSeen": usersSeen,
+    });
     _text = messageText;
     notifyListeners();
   }
 
   ///seen this message by current user if hasn't seen yet
-  Future seenMessage(User currentUser) async {
+  Future seenMessage(User currentUser, String chatId) async {
     if (_senderId != currentUser.id &&
         !_usersSeen.containsKey(currentUser.id)) {
       _usersSeen.putIfAbsent(
         currentUser.id,
         () => DateTime.now(),
       );
-      return http.post(Uri.parse("https://test.com"));
+
+      await FirebaseFirestore.instance
+          .collection("PrivateChats/$chatId/Messages")
+          .doc(id)
+          .update({
+        "text": text,
+        "senderId": senderId,
+        "sendTime": sendTime,
+        "isEdited": isEdited,
+        "usersSeen": usersSeen,
+      });
     }
   }
 }

@@ -10,6 +10,7 @@ import 'package:chatapp/Providers/User.dart';
 import 'package:chatapp/Providers/Chats.dart';
 import 'package:chatapp/Widgets/AppDrawer.dart';
 import 'package:chatapp/Widgets/ChatItem.dart';
+import 'package:chatapp/Models/ConnectivityState.dart';
 
 ///App home screen
 class HomeScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _connectivityState = "Waiting...";
+  ConnectivityState _connectivityState = ConnectivityState.waiting;
 
   ///checking connection state
   Future checkConnectionState() async {
@@ -33,14 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
       //if internet is off
       if (result == ConnectivityResult.none) {
-        _connectivityState = "Waiting...";
+        _connectivityState = ConnectivityState.waiting;
         setState(() {});
       }
 
       //if internet is on
       else {
         //state before connect
-        _connectivityState = "Connecing...";
+        _connectivityState = ConnectivityState.connecting;
         setState(() {});
 
         //check connection to server
@@ -56,36 +57,33 @@ class _HomeScreenState extends State<HomeScreen> {
             //if can connect to server
             //200-299 status code
             case 2:
-              _connectivityState = "Updating...";
+              _connectivityState = ConnectivityState.updating;
               setState(() {});
-              await Provider.of<Chats>(context, listen: false)
-                  .loadChats((bool done) {
-                if (done) {
-                  _connectivityState = "Connected";
-                  setState(() {});
-                }
+              await Provider.of<Chats>(context, listen: false).loadChats(() {
+                _connectivityState = ConnectivityState.connected;
+                setState(() {});
               });
               break;
 
             //400-499 status code
             case 4:
-              _connectivityState = "Client Error";
+              _connectivityState = ConnectivityState.clientError;
               break;
 
             //500-599 status code
             case 5:
-              _connectivityState = "Server Error";
+              _connectivityState = ConnectivityState.serverError;
               break;
 
             //other promlems
             default:
-              _connectivityState = "Connecting...";
+              _connectivityState = ConnectivityState.connecting;
           }
         } on SocketException catch (message) {
           if (kDebugMode) {
             print("##### socketException in connection status: $message");
           }
-          _connectivityState = "Waiting...";
+          _connectivityState = ConnectivityState.noInternetConnection;
         }
         setState(() {});
       }
@@ -115,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
               length: 2,
               child: Scaffold(
                 appBar: AppBar(
-                  title: Text(_connectivityState),
+                  title: Text(getConnectivityState(_connectivityState)),
                   actions: [
                     //search button
                     IconButton(

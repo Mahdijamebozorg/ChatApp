@@ -1,6 +1,5 @@
 import 'package:chatapp/Providers/Message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:chatapp/Providers/Chat/Chat.dart';
@@ -57,17 +56,17 @@ class Chats with ChangeNotifier {
     Function done,
     /*Authentication data*/
   ) async {
-    //initial fireBase
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp().then((value) {
-        if (kDebugMode) {
-          print("***** App initialized in loadChats: ${value.name}");
-        }
-      });
-    }
-
-    await loadPrivateChats();
+    await loadPrivateChats(done);
     // listenToPrivateChats();
+  }
+
+//------------------------------------------------------------------------------------------------------------
+
+  bool hasChat(String id) {
+    for (var chat in _chats) {
+      if (chat.id == id) return true;
+    }
+    return false;
   }
 
 //------------------------------------------------------------------------------------------------------------
@@ -76,20 +75,38 @@ class Chats with ChangeNotifier {
   ///
   ///Future Feature:
   ///* offline mode
-  Future loadPrivateChats() async {
+  ///* remove chat
+  Future loadPrivateChats(Function done) async {
     if (kDebugMode) print("***** loading privateChats...");
 
+    //get user PrivateChats collection
     final userPrivateChatsCollection = await FirebaseFirestore.instance
         .collection("PrivateChats")
-        .orderBy("createdDate")
-        .where("users.$_userId", isEqualTo: true)
-        .get();
+        //index needed
+        // .orderBy("createdDate")
+        .where("users.$_userId", isEqualTo: true);
 
-    for (var chatDoc in userPrivateChatsCollection.docs) {
-      final PrivateChat chat = await PrivateChat.loadFromDocument(chatDoc);
-      if (!_chats.contains(chat)) {
-        _chats.add(chat);
+    await for (QuerySnapshot<Map<String, dynamic>> privateChats
+        in userPrivateChatsCollection.snapshots()) {
+      for (var chatDoc in privateChats.docs) {
+
+        final PrivateChat chat = await PrivateChat.loadFromDocument(chatDoc);
+
+        //add
+        if (!hasChat(chat.id)) {
+          _chats.add(chat);
+          if (kDebugMode) print("===== Chat added: ${chat.id}");
+        }
+
+        //update
+        else {
+          int index = _chats.indexWhere((c) => c.id == chat.id);
+          _chats[index] = chat;
+          if (kDebugMode) print("===== Chat updated: ${chat.id}");
+        }
       }
+      done();
+      notifyListeners();
     }
   }
 
@@ -99,43 +116,44 @@ class Chats with ChangeNotifier {
   ///
   ///Future Feature:
   ///* handle unsent messages
-  Stream listenToPrivateChats() async* {
-    final userPrivateChatsCollection = FirebaseFirestore.instance
-        .collection("PrivateChats")
-        .orderBy("createdDate")
-        .where("users.$_userId", isEqualTo: true);
+  // Future listenToPrivateChats() async {
+  //   final userPrivateChatsCollection = FirebaseFirestore.instance
+  //       .collection("PrivateChats")
+  //       //index needed
+  //       // .orderBy("createdDate")
+  //       .where("users.$_userId", isEqualTo: true);
 
-    //load user privateChats and listen to them
-    await for (QuerySnapshot<Map<String, dynamic>> privateChats
-        in userPrivateChatsCollection.snapshots()) {
-      //look for changes
-      for (var docChanges in privateChats.docChanges) {
-        //load messages from local dataBase
-        List<Message> unsentMessages = []; //= dbHelper.fetchData(table)...
+  //   //load user privateChats and listen to them
+  //   await for (QuerySnapshot<Map<String, dynamic>> privateChats
+  //       in userPrivateChatsCollection.snapshots()) {
+  //     //look for changes
+  //     for (var docChanges in privateChats.docChanges) {
+  //       //load messages from local dataBase
+  //       List<Message> unsentMessages = []; //= dbHelper.fetchData(table)...
 
-        final changedChat = await PrivateChat.loadFromDocument(docChanges.doc);
+  //       final changedChat = await PrivateChat.loadFromDocument(docChanges.doc);
 
-        //if chat is already loaded
-        if (_chats.contains(changedChat)) {
-          //if chat removed from database
-          if (!docChanges.doc.exists) {
-            _chats.removeWhere((c) => c.id == changedChat.id);
-          }
-          //if chat updated from database
-          else {
-            final index = _chats.lastIndexWhere((c) => c.id == changedChat.id);
-            _chats[index] = changedChat;
-          }
-        }
-        //if chat added to database
-        else {
-          _chats.add(changedChat);
-        }
+  //       //if chat is already loaded
+  //       if (_chats.contains(changedChat)) {
+  //         //if chat removed from database
+  //         if (!docChanges.doc.exists) {
+  //           _chats.removeWhere((c) => c.id == changedChat.id);
+  //         }
+  //         //if chat updated from database
+  //         else {
+  //           final index = _chats.lastIndexWhere((c) => c.id == changedChat.id);
+  //           _chats[index] = changedChat;
+  //         }
+  //       }
+  //       //if chat added to database
+  //       else {
+  //         _chats.add(changedChat);
+  //       }
 
-        notifyListeners();
-      }
-    }
-  }
+  //       notifyListeners();
+  //     }
+  //   }
+  // }
 
   //------------------------------------------------------------------------------------------------------------
 }

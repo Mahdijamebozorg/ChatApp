@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
 class AppDrawer extends StatelessWidget {
   final Size screenSize;
-  const AppDrawer(this.screenSize);
+  const AppDrawer(this.screenSize, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +36,14 @@ class AppDrawer extends StatelessWidget {
                   ),
                   onTap: () {},
                 ),
-                 Divider
-                (
+                Divider(
                   color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                ListTile(
+                  title: const Text("Log out"),
+                  leading: const Icon(Icons.logout),
+                  onTap: () async =>
+                      await FirebaseAuth.instance.signOut(),
                 )
               ],
             ),

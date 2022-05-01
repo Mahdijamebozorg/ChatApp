@@ -44,6 +44,13 @@ abstract class Chat with ChangeNotifier {
     return _id;
   }
 
+  bool hasMessage(String id) {
+    for (var message in messages) {
+      if (message.id == id) return true;
+    }
+    return false;
+  }
+
   ///takes a chat document and returns list of users
   static Future<List<User>> loadUsersInChat(
       DocumentSnapshot<Map<String, dynamic>> chat,
