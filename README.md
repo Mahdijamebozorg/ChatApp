@@ -1,3 +1,3 @@
 # chatapp
 
-## A realtime messaging app writen in flutter!
+## A realtime messaging app written in flutter!
