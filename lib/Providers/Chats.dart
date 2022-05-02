@@ -75,12 +75,12 @@ class Chats with ChangeNotifier {
   ///
   ///Future Feature:
   ///* offline mode
-  ///* remove chat
+  ///* remove chat from server
   Future loadPrivateChats(Function done) async {
     if (kDebugMode) print("***** loading privateChats...");
 
     //get user PrivateChats collection
-    final userPrivateChatsCollection = await FirebaseFirestore.instance
+    final userPrivateChatsCollection = FirebaseFirestore.instance
         .collection("PrivateChats")
         //index needed
         // .orderBy("createdDate")
@@ -89,7 +89,6 @@ class Chats with ChangeNotifier {
     await for (QuerySnapshot<Map<String, dynamic>> privateChats
         in userPrivateChatsCollection.snapshots()) {
       for (var chatDoc in privateChats.docs) {
-
         final PrivateChat chat = await PrivateChat.loadFromDocument(chatDoc);
 
         //add

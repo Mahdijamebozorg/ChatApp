@@ -29,89 +29,91 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         app = snapshot.hasData ? snapshot.data : null;
 
-        return snapshot.connectionState == ConnectionState.waiting
+        //initializing...
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-            //initializing...
-            ? const Center(child: CircularProgressIndicator())
-            : !snapshot.hasData
-                //if can't initialize app
-                ? const MaterialApp(
-                    home: Scaffold(
-                      body: Center(
-                        child: Text("App not initialized!"),
-                      ),
-                    ),
-                  )
+        //done
+        else {
+          //not initialized
+          if (!snapshot.hasData) {
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: Text("App not initialized!"),
+                ),
+              ),
+            );
+          }
+          // initialized
+          else {
+            return MaterialApp(
+              title: 'Chat App',
+              debugShowCheckedModeBanner: false,
 
-                //initializing done
-                : MaterialApp(
-                    title: 'Chat App',
-                    debugShowCheckedModeBanner: false,
+              //Theme
+              theme: UserThemeData(context).themeData,
 
-                    //Theme
-                    theme: UserThemeData(context).themeData,
+              //Routes
+              routes: {
+                //authentication
+                "/": (_) => StreamBuilder(
+                    stream: firebase_auth.FirebaseAuth.instanceFor(app: app!)
+                        .authStateChanges(),
+                    builder: (_, AsyncSnapshot<firebase_auth.User?> userData) {
+                      if (kDebugMode && userData.hasData) {
+                        // ignore: avoid_print
+                        print(
+                            "data: ${userData.data!}, providerData: ${userData.data!.providerData}}");
+                      }
+                      //if auth failed
+                      if (!userData.hasData) {
+                        return const AuthenticationScreen();
+                      }
 
-                    //Routes
-                    routes: {
-                      //authentication...
-                      "/": (_) => StreamBuilder(
-                          stream:
-                              firebase_auth.FirebaseAuth.instanceFor(app: app!)
-                                  .authStateChanges(),
-                          builder:
-                              (_, AsyncSnapshot<firebase_auth.User?> userData) {
-                            if (kDebugMode && userData.hasData) {
-                              // ignore: avoid_print
-                              print(
-                                  "data: ${userData.data!}, providerData: ${userData.data!.providerData}}");
-                            }
-                            //if auth failed
-                            if (!userData.hasData) {
-                              return const AuthenticationScreen();
-                            }
+                      //if auth done
+                      else {
+                        //load userdata from server
+                        return StreamBuilder<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                            stream: FirebaseFirestore.instanceFor(app: app!)
+                                .collection("Users")
+                                .doc(userData.data!.uid)
+                                .snapshots(),
+                            builder: (_, userSnapshot) {
+                              return !userSnapshot.hasData
+                                  //waiting
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
 
-                            //if auth done
-                            else {
-                              //load userdata from server
-                              return StreamBuilder<
-                                      DocumentSnapshot<Map<String, dynamic>>>(
-                                  stream:
-                                      FirebaseFirestore.instanceFor(app: app!)
-                                          .collection("Users")
-                                          .doc(userData.data!.uid)
-                                          .snapshots(),
-                                  builder: (_, userSnapshot) {
-                                    return !userSnapshot.hasData
-                                        //waiting
-                                        ? const Center(
-                                            child: CircularProgressIndicator())
+                                  //set data providers
+                                  : MultiProvider(
+                                      providers: [
+                                        //user data provider
+                                        ChangeNotifierProvider<User>(
+                                          create: (_) => User.loadFromDocument(
+                                              userSnapshot.data!),
+                                        ),
 
-                                        //set data providers
-                                        : MultiProvider(
-                                            providers: [
-                                              //user data provider
-                                              ChangeNotifierProvider<User>(
-                                                create: (_) =>
-                                                    User.loadFromDocument(
-                                                        userSnapshot.data!),
-                                              ),
-
-                                              //chats data provider
-                                              ChangeNotifierProvider<Chats>(
-                                                create: (_) =>
-                                                    Chats(userData.data!.uid),
-                                              ),
-                                            ],
-                                            child: const HomeScreen(),
-                                          );
-                                  });
-                            }
-                          }),
-                      ChatScreen.routeName: (_) => const ChatScreen(),
-                      AuthenticationScreen.routeName: (_) =>
-                          const AuthenticationScreen(),
-                    },
-                  );
+                                        //chats data provider
+                                        ChangeNotifierProvider<Chats>(
+                                          create: (_) =>
+                                              Chats(userData.data!.uid),
+                                        ),
+                                      ],
+                                      child: const HomeScreen(),
+                                    );
+                            });
+                      }
+                    }),
+                ChatScreen.routeName: (_) => const ChatScreen(),
+                AuthenticationScreen.routeName: (_) =>
+                    const AuthenticationScreen(),
+              },
+            );
+          }
+        }
       },
     );
   }

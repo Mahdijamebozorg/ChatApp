@@ -15,48 +15,81 @@ class ChatMessages extends StatelessWidget {
     if (kDebugMode) print("##### State Managing: ChatMessages rebuilt");
     return Consumer<Message>(
       builder: (context, message, child) {
-        //seen message by current user
-        //await???
+//seen message by current user
         message.seenMessage(currentUser, chatId);
-        return Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                message.text,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+        return Align(
+//alignment
+          alignment: currentUser.id == message.senderId
+              ? Alignment.topRight
+              : Alignment.topLeft,
+//shape and color
+          child: Container(
+            constraints: BoxConstraints(
+              minWidth: 70,
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
             ),
-            Positioned(
-              right: 5,
-              bottom: 2,
-              child: Text(
-                //test
-                message.sendTime == null ? "" : message.sendTimePreview,
-                // message.sendTime.hour.toString() ??
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
-            Positioned(
-              left: 2,
-              bottom: 2,
-              child: message.sendTime != null
-                  ? message.senderId == currentUser.id
-                      //show read state
-                      ? Icon(
-                          message.usersSeen.isNotEmpty
-                              ? Icons.keyboard_double_arrow_left_sharp
-                              : Icons.arrow_back_ios_new,
-                          size: 12,
-                        )
-                      //don't show read state
-                      : Container()
-                  : const Icon(
-                      Icons.timelapse,
-                      size: 12,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              color: (message.senderId == currentUser.id
+                  ? const Color.fromARGB(255, 25, 86, 176)
+                  : const Color.fromARGB(255, 40, 40, 55)),
+              child: Stack(
+                children: [
+                  //text
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12,
+                      right: 12,
+                      bottom: 17,
+                      top: 10,
                     ),
-            )
-          ],
+                    child: Text(
+                      message.text,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+
+                  //time
+                  Positioned(
+                    right: 5,
+                    bottom: 2,
+                    child: Text(
+                      //test
+                      message.sendTime == null ? "" : message.sendTimePreview,
+                      // message.sendTime.hour.toString() ??
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+
+                  //read state
+                  Positioned(
+                    left: 2,
+                    bottom: 2,
+                    //if message has sent
+                    child: (message.sendTime != null)
+                        //if sender is current user
+                        ? (message.senderId == currentUser.id)
+                            //show read state
+                            ? Icon(
+                                message.usersSeen.isNotEmpty
+                                    ? Icons.keyboard_double_arrow_left_sharp
+                                    : Icons.arrow_back_ios_new,
+                                size: 12,
+                              )
+                            //don't show read state
+                            : Container()
+
+                        //message hasn't sent
+                        : const Icon(
+                            Icons.timelapse,
+                            size: 12,
+                          ),
+                  )
+                ],
+              ),
+            ),
+          ),
         );
       },
     );

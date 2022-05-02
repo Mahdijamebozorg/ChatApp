@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//easier to implement
 class SlideTransitionRoute extends MaterialPageRoute {
   SlideTransitionRoute({required WidgetBuilder builder})
       : super(builder: builder);
@@ -8,9 +9,36 @@ class SlideTransitionRoute extends MaterialPageRoute {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     //don't animate on first route
-    if (settings.name == '/') {
-      return child;
-    }
+    if (settings.name == '/') return child;
+
+    return SlideTransition(
+      child: child,
+      position: Tween<Offset>(
+        begin: const Offset(1, 0),
+        end: const Offset(0, 0),
+      ).animate(animation),
+    );
+  }
+}
+
+//has more options
+class SlideTransitionRouteWithBackground extends PageRouteBuilder {
+  SlideTransitionRouteWithBackground({
+    required Widget Function(BuildContext, Animation, Animation) pageBuilder,
+  }) : super(
+          pageBuilder: pageBuilder,
+          opaque: false,
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+        );
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return SlideTransition(
       child: child,
       position: Tween<Offset>(

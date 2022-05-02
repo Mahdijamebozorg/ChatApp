@@ -19,8 +19,8 @@ class ChatItem extends StatelessWidget {
   ///select a chat and provide chat data for it
   void selectChat(BuildContext context, Chat chat, User user) {
     Navigator.of(context).push(
-      SlideTransitionRoute(
-        builder: (context) => MultiProvider(
+      SlideTransitionRouteWithBackground(
+        pageBuilder: (ctx, aIn, aOut) => MultiProvider(
           providers: [
             ChangeNotifierProvider<Chat>.value(
               value: chat,
@@ -32,6 +32,20 @@ class ChatItem extends StatelessWidget {
           child: const ChatScreen(),
         ),
       ),
+      //in this mode, background widget was no
+      // SlideTransitionRoute(
+      //   builder: (context) => MultiProvider(
+      //     providers: [
+      //       ChangeNotifierProvider<Chat>.value(
+      //         value: chat,
+      //       ),
+      //       ChangeNotifierProvider<User>.value(
+      //         value: user,
+      //       ),
+      //     ],
+      //     child: const ChatScreen(),
+      //   ),
+      // ),
     );
   }
 

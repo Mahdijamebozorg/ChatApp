@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:chatapp/Providers/Chat/PrivateChat.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -61,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {});
               await Provider.of<Chats>(context, listen: false).loadChats(() {
                 _connectivityState = ConnectivityState.connected;
-                setState(() {});
               });
               break;
 

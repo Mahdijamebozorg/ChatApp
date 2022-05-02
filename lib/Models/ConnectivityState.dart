@@ -26,7 +26,7 @@ String getConnectivityState(ConnectivityState state) {
       return "Connecting...";
 
     case ConnectivityState.updating:
-      return "Updating";
+      return "Updating...";
 
     case ConnectivityState.connected:
       return "Connected!";

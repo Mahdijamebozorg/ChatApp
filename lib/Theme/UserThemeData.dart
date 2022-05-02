@@ -4,12 +4,12 @@ class UserThemeData {
   final BuildContext context;
   ThemeData? themeData;
   UserThemeData(this.context) {
-    final themeData = ThemeData(
+    themeData = ThemeData(
       primarySwatch: Colors.indigo,
 
       scaffoldBackgroundColor: Colors.black87,
 
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       //buttons theme
       buttonTheme: ButtonTheme.of(context).copyWith(
         shape: const RoundedRectangleBorder(
