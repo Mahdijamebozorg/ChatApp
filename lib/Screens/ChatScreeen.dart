@@ -123,11 +123,23 @@ class ChatScreen extends StatelessWidget {
                             ChangeNotifierProvider<Message>.value(
                           value: chat.messages[index],
                           child: Dismissible(
+                            movementDuration: const Duration(milliseconds: 500),
+                            resizeDuration: Duration.zero,
+                            dismissThresholds: const {
+                              DismissDirection.endToStart: 0.01,
+                              DismissDirection.startToEnd: 1,
+                            },
+                            background: Icon(Icons.reply,
+                                color: Theme.of(context)
+                                    .buttonTheme
+                                    .colorScheme!
+                                    .onBackground),
                             direction: DismissDirection.endToStart,
-                            // crossAxisEndOffset: 100,
+                            crossAxisEndOffset: 30,
                             confirmDismiss: (value) async {
                               //Future Features:
                               //* vibrate on reply
+                              print("=========================");
                               return false;
                             },
                             key: UniqueKey(),

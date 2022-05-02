@@ -88,8 +88,9 @@ class Chats with ChangeNotifier {
 
     await for (QuerySnapshot<Map<String, dynamic>> privateChats
         in userPrivateChatsCollection.snapshots()) {
-      for (var chatDoc in privateChats.docs) {
-        final PrivateChat chat = await PrivateChat.loadFromDocument(chatDoc);
+      for (var chatDoc in privateChats.docChanges) {
+        final PrivateChat chat =
+            await PrivateChat.loadFromDocument(chatDoc.doc);
 
         //add
         if (!hasChat(chat.id)) {
@@ -99,7 +100,7 @@ class Chats with ChangeNotifier {
 
         //update
         else {
-          int index = _chats.indexWhere((c) => c.id == chat.id);
+          final index = _chats.indexWhere((c) => c.id == chat.id);
           _chats[index] = chat;
           if (kDebugMode) print("===== Chat updated: ${chat.id}");
         }

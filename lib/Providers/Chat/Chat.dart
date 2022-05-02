@@ -62,6 +62,7 @@ abstract class Chat with ChangeNotifier {
           await FirebaseFirestore.instance.collection("Users").doc(id).get();
 
       if (user.data() != null) users.add(User.loadFromDocument(user));
+      print("===== user added: ${user.id}");
     }
     return users;
   }

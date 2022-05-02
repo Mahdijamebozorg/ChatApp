@@ -9,7 +9,7 @@ class UserThemeData {
 
       scaffoldBackgroundColor: Colors.black87,
 
-      brightness: Brightness.light,
+      brightness: Brightness.dark,
       //buttons theme
       buttonTheme: ButtonTheme.of(context).copyWith(
         shape: const RoundedRectangleBorder(

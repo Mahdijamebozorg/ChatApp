@@ -26,38 +26,35 @@ class PrivateChat extends Chat {
 
   @override
   Future loadMessages() async {
-    // final messagesCollection =
-    //     FirebaseFirestore.instance.collection("PrivateChats/$id/Messages")
-    //     // .orderBy("sendTime")
-    //     ;
+    final messagesCollection =
+        FirebaseFirestore.instance.collection("PrivateChats/$id/Messages")
+        // .orderBy("sendTime")
+        ;
 
-    // //listen for changed messages in Messages collection
-    // await for (QuerySnapshot<Map<String, dynamic>> chats
-    //     in messagesCollection.snapshots()) {
-    //   for (var changes in chats.docChanges) {
-    //     Message changedMessage = Message.loadFromDocument(changes.doc);
+    //listen for changed messages in Messages collection
+    await for (QuerySnapshot<Map<String, dynamic>> chats
+        in messagesCollection.snapshots()) {
+      for (var changes in chats.docChanges) {
+        Message loadedMessage = Message.loadFromDocument(changes.doc);
 
-    //     //if message exists in app
-    //     if (hasMessage(changedMessage.id)) {
-    //       //if removed from database
-    //       if (!changes.doc.exists) {
-    //         _messages.removeWhere((m) => m.id == changedMessage.id);
-    //       }
+        //if message exists in app
+        if (hasMessage(loadedMessage.id)) {
+          //if removed from database
+          //...
 
-    //       //if updated in database
-    //       else {
-    //         final index =
-    //             _messages.indexWhere((m) => changedMessage.id == m.id);
-    //         _messages[index] = changedMessage;
-    //       }
-    //     }
-    //     //if added to database
-    //     else {
-    //       _messages.add(changedMessage);
-    //     }
-    //     notifyListeners();
-    //   }
-    // }
+          //if updated in database
+          final index = _messages.indexWhere((m) => loadedMessage.id == m.id);
+          _messages[index] = loadedMessage;
+          if (kDebugMode) print("===== Message updated: ${loadedMessage.id}");
+        }
+        //if added to database
+        else {
+          _messages.add(loadedMessage);
+          if (kDebugMode) print("===== Message added: ${loadedMessage.id}");
+        }
+        notifyListeners();
+      }
+    }
   }
 
   ///takes a PrivateChat doc and makes a PrivateChat instance
@@ -71,9 +68,7 @@ class PrivateChat extends Chat {
 
     //messages
     final messages =
-        (await doc.reference.collection("Messages")
-        .orderBy("sendTime")
-        .get())
+        (await doc.reference.collection("Messages").orderBy("sendTime").get())
             .docs
             .map((message) {
       return Message.loadFromDocument(message);
@@ -127,7 +122,6 @@ class PrivateChat extends Chat {
 
       //remove temp view
       _unsentMessages.removeWhere((message) => message.id == newMessage.id);
-      _messages.add(newMessage);
     } on SocketException catch (message) {
       if (kDebugMode) print("##### socketException in sendMessage: $message");
     }
@@ -181,7 +175,10 @@ class PrivateChat extends Chat {
 
   @override
   String chatTitle(User currentUser) {
-    if (_users.isEmpty || _users.length == 1) return "no user found!";
+    if (_users.isEmpty) return "no user found!";
+
+    if (_users.length == 1) return currentUser.name;
+
     return _users.firstWhere((user) => currentUser.id != user.id).name;
   }
 
@@ -216,7 +213,7 @@ class PrivateChat extends Chat {
   List<String> profiles(User currentUser) {
     if (_users.isEmpty) {
       return ["assets/images/user.png"];
-    } 
+    }
     return _users.firstWhere((user) => user.id == currentUser.id).profileUrls;
   }
 }
