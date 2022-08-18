@@ -12,11 +12,11 @@ class SlideTransitionRoute extends MaterialPageRoute {
     if (settings.name == '/') return child;
 
     return SlideTransition(
-      child: child,
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: const Offset(0, 0),
       ).animate(animation),
+      child: child,
     );
   }
 }
@@ -40,11 +40,11 @@ class SlideTransitionRouteWithBackground extends PageRouteBuilder {
     Widget child,
   ) {
     return SlideTransition(
-      child: child,
       position: Tween<Offset>(
         begin: const Offset(1, 0),
         end: const Offset(0, 0),
       ).animate(animation),
+      child: child,
     );
   }
 }
