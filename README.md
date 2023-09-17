@@ -3,6 +3,7 @@
 ## A realtime messaging app writen in flutter!
 
 ### Features:
+- private chats, channels, groups ...
 - socket connection
 - using Firebase as backend
 - shwoing connection state
